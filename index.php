@@ -9,20 +9,27 @@
 
 <body>
     <?php
-    $images = glob('assets/**.jpg');
+    $images = glob('assets/images/**.jpg');
     foreach ($images as $image) {
 
-        echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
+        // echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
         echo "" . dirname($image) . "/" . basename($image) . "<br>";
         ;
     }
-    $images = glob('assets/**/*.jpg');
+    $images = glob('assets/images/**/*.jpg');
     foreach ($images as $image) {
 
-        echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
+        // echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
         echo "" . dirname($image) . "/" . basename($image) . "<br>";
         ;
     }
+    ?>
+    <?php foreach (scandir('assets/images') as $item) {
+        if ($item === '.' || $item === '..') continue;
+        echo $item . "<br>";
+    }
+    
+    
     ?>
 
 </body>
