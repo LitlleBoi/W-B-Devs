@@ -5,26 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
+<?php
+include 'assets/includes/connectie.php'; ?>
 
 <body>
-    <?php
-    $images = glob('assets/**.jpg');
-    foreach ($images as $image) {
 
-        echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
-        echo "" . dirname($image) . "/" . basename($image) . "<br>";
-        ;
-    }
-    $images = glob('assets/**/*.jpg');
-    foreach ($images as $image) {
-
-        echo "<img src='$image' alt='' style='max-width: 200px; margin: 10px;'><br>";
-        echo "" . dirname($image) . "/" . basename($image) . "<br>";
-        ;
-    }
-    ?>
-
+    <?php foreach ($panorama as $item): ?>
+        <h2><?php echo $item['titel']; ?></h2>
+        <img src="<?php echo $item['afbeelding']; ?>" alt="<?php echo $item['titel']; ?>">
+        <p><?php echo $item['beschrijving']; ?></p>
+    <?php endforeach; ?>
 </body>
 
 </html>
