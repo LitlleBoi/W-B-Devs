@@ -12,11 +12,15 @@ include 'assets/includes/connectie.php'; ?>
 
 <body>
 
-    <?php foreach ($panorama as $item): ?>
-        <h2><?php echo $item['titel']; ?></h2>
-        <img src="<?php echo $item['afbeelding']; ?>" alt="<?php echo $item['titel']; ?>">
-        <p><?php echo $item['beschrijving']; ?></p>
-    <?php endforeach; ?>
+    <main>
+        <?php foreach ($info as $panorama): ?>
+            <div class="panorama">
+                <h2><?php echo $panorama['titel']; ?></h2>
+                <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
+                <!-- <p><?php echo $panorama['beschrijving']; ?></p> -->
+            </div>
+        <?php endforeach; ?>
+    </main>
 </body>
 
 </html>

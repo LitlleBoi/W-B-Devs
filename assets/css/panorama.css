@@ -1,0 +1,9 @@
+.panorama,
+.panorama img {
+  width: 90vw;
+}
+main {
+  margin-top: 200px;
+  padding: 20px;
+  display: flex;
+}
