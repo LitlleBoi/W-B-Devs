@@ -38,6 +38,31 @@ if ($result && $result->num_rows > 0) {
     echo "0 results";
 }
 
+$stmt = $conn->prepare("SELECT * FROM punten");
+$stmt->execute();
+$result = $stmt->get_result();
+
+$punten = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $punten[] = [
+            'id' => $row['id'],
+            'titel' => $row['titel'],
+            'x' => $row['x_coordinaat'] ?? '',
+            'y' => $row['y_coordinaat'] ?? '',
+            'hoogte' => $row['hoogte'] ?? '',
+            'breedte' => $row['breedte'] ?? '',
+            'beschrijving' => $row['omschrijving'],
+            'gebruiker_id' => $row['gebruiker_id'],
+            'status' => $row['status'],
+            'aangemaakt_op' => $row['aangemaakt_op'],
+            'bijgewerkt_op' => $row['bijgewerkt_op']
+        ];
+    }
+} else {
+    echo "0 results";
+}
+
 $stmt->close();
 $conn->close();
 ?>
