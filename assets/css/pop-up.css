@@ -3,6 +3,9 @@
 *::before {
   box-sizing: border-box;
 }
+main {
+  position: relative;
+}
 .modal {
   position: fixed;
   top: 50%;
@@ -12,12 +15,13 @@
   border: 1px solid black;
   border-radius: 10px;
   z-index: 10;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0);
   width: 500px;
   max-width: 80%;
 }
 .modal.active {
   transform: translate(-50%, -50%) scale(1);
+  background-color: white;
 }
 .modal-header {
   padding: 10px 15px;
@@ -50,10 +54,15 @@
   left: 0;
   right: 0;
   bottom: 0;
- 
+
   pointer-events: none;
 }
 #overlay.active {
   opacity: 1;
   pointer-events: auto;
+}
+button.punt {
+  position: absolute;
+  background-color: transparent;
+  border: none;
 }

@@ -8,9 +8,13 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/pop-up.css">
     <script src="assets/js/pop-up.js" defer></script>
+    <script src="assets/js/x-y.js" defer></script>
 </head>
 <?php
-include 'assets/includes/connectie.php'; ?>
+include 'assets/includes/connectie.php';
+
+?>
+
 
 <body>
 
@@ -19,35 +23,65 @@ include 'assets/includes/connectie.php'; ?>
             <div class="panorama">
                 <h2><?php echo $panorama['titel']; ?></h2>
                 <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
-                <!-- <p><?php echo $panorama['beschrijving']; ?></p> -->
+
             </div>
         <?php endforeach; ?>
 
         <?php foreach ($punten as $punt): ?>
-            <div>
-                <h1><?php echo $punt['titel'] ?></h1>
+            <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt" style="top:<?php echo $punt['y']; ?>px; left:<?php echo $punt['x']; ?>px;
+                height:<?php echo $punt['hoogte']; ?>px; width:<?php echo $punt['breedte']; ?>px;"
+                alt="<?php echo $punt['titel']; ?>">
+            </button>
+            <div class="modal" id="modal-<?php echo $punt['id']; ?>">
+                <div class="modal-header">
+                    <div class="titel"><?php echo $punt['titel']; ?></div>
+                    <button data-close-button class="close-button">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <?php echo $punt['omschrijving']; ?>
+                </div>
             </div>
+            <?php
+            $gevonden_bronnen = [];
+            foreach ($bronnen as $bron) {
+                if ($bron['punt_id'] == $punt['id']) {
+                    $gevonden_bronnen[] = $bron;
+                }
+
+            }
+            ?>
+            <?php foreach ($gevonden_bronnen as $bron): ?>
+                <div class="bron-item">
+                    <h4><?php echo $bron['titel']; ?></h4>
+
+                    <?php if (!empty($bron['auteur'])): ?>
+
+                        <p><strong>Auteur:</strong> <?php echo $bron['auteur']; ?></p>
+                    <?php endif; ?>
+
+                    <?php if (!empty($bron['referentie_tekst'])): ?>
+
+                        <p><?php echo $bron['referentie_tekst']; ?></p>
+                    <?php endif; ?>
+
+                    <?php if (!empty($bron['afbeelding'])): ?>
+                        <img src="<?php echo $bron['afbeelding']; ?>" alt="<?php echo $bron['titel']; ?>">
+
+                    <?php endif; ?>
+
+                </div>
+            <?php endforeach; ?>
         <?php endforeach; ?>
+        <div id="overlay"></div>
     </main>
-    <button data-modal-target="#modal" class="punt<?php echo $punten[0]['id']; ?>">Click me</button>
-    <div class="modal" id="modal">
-        <div class="modal-header">
-            <div class="titel">example modal</div>
-            <button data-close-button class="close-button">&times;</button>
-        </div>
-        <div class="modal-body">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse, culpa
-            assumenda quis animi ullam excepturi ad similique nam delectus natus,
-            ducimus accusamus odit laboriosam expedita perspiciatis deleniti numquam
-            rerum veniam facilis maiores quo nemo? Ad perspiciatis, aut incidunt
-            quasi saepe minima expedita quod deleniti libero nostrum cumque velit
-            quas facilis quos vel odio voluptatem, corrupti mollitia laudantium illo
-            suscipit? Alias asperiores libero iste aliquam vero sapiente corrupti
-            numquam consectetur reprehenderit nostrum harum, saepe inventore. Beatae
-            soluta aperiam enim qui dolorem?
-        </div>
-    </div>
-    <div id="overlay"></div>
+    <script>
+
+        document.addEventListener('click', function (event) {
+            let container = document.querySelector('main');
+            console.log('X:', event.target.offsetLeft, 'Y:', event.clientY);
+        });
+    </script>
+    <?php include 'assets/includes/x-y.php'; ?>
 </body>
 
 </html>
