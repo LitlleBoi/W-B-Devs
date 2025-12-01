@@ -1,3 +1,8 @@
+<?php
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+?>
 <header>
     <div class="container">
         <div class="search">
@@ -22,11 +27,17 @@
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
                 <div>inlog</div>
             </a>
+            <?php if (isset($_SESSION['login']) && $_SESSION['login'] === 'true'): ?>
+            <a href="assets/includes/logout.php">
+            <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+            <div>Logout</div>
+            </a>
+            <?php endif; ?>
         </div>
-        <div class="logo">
+        <!-- <div class="logo">
             <a href="index.php">
                 <img src="assets/img/logo.png" alt="W&amp;B Devs Logo">
-            </a>
+            </a> -->
         </div>
     </div>
 </header>
