@@ -29,6 +29,7 @@ if ($result_panorama && $result_panorama->num_rows > 0) {
             'afbeelding' => $row['afbeelding_url'] ?? '',
             'beschrijving' => $row['beschrijving'],
             'gebruiker_id' => $row['gebruiker_id'],
+            'pagina' => $row['pagina'],
             'status' => $row['status'],
             'aangemaakt_op' => $row['aangemaakt_op'],
             'bijgewerkt_op' => $row['bijgewerkt_op']

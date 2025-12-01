@@ -121,9 +121,16 @@ main {
   pointer-events: all;
 }
 .punt {
-  position: absolute; /* 🆕 Nu werken percentages! */
-  transform: translate(-50%, -50%); /* 🎯 Centreer het punt */
+  position: absolute; 
+  transform: translate(-50%, -50%); 
   cursor: pointer;
   transition: all 0.3s ease;
   background-color: transparent;
+}
+
+@media (min-width: 2000px) {
+  .modal {
+    width: 1800px;
+    max-width: 90%;
+  }
 }

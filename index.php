@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/pop-up.css">
     <script src="assets/js/pop-up.js" defer></script>
-    <script src="assets/js/recoords.js" defer></script>
-    <script src="assets/js/x-y.js" defer></script>
+    <script src="assets/js/omschrijving.js" defer></script>
+    <!-- <script src="assets/js/recoords.js" defer></script> -->
+    <!-- <script src="assets/js/x-y.js" defer></script> -->
 </head>
 <?php
 include 'assets/includes/connectie.php';
@@ -20,17 +21,17 @@ include 'assets/includes/connectie.php';
         <?php foreach ($info as $panorama): ?>
             <div class="panorama">
                 <h2><?php echo $panorama['titel']; ?></h2>
+
                 <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
+                <h2><?php echo $panorama['pagina']; ?></h2>
             </div>
         <?php endforeach; ?>
 
         <?php foreach ($punten as $punt): ?>
             <!-- KNOP OP DE KAART -->
-            <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt" data-x="<?php echo $punt['x']; ?>"
-                data-y="<?php echo $punt['y']; ?>"
-                style="height:<?php echo $punt['hoogte']; ?>px; width:<?php echo $punt['breedte']; ?>px;"
-                alt="<?php echo $punt['titel']; ?>"
-                title="ID: <?php echo $punt['id']; ?> | X: <?php echo $punt['x']; ?> | Y: <?php echo $punt['y']; ?>">
+            <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt" style="top:<?php echo $punt['y']; ?>px; left:<?php echo $punt['x']; ?>px;
+                height:<?php echo $punt['hoogte']; ?>px; width:<?php echo $punt['breedte']; ?>px;"
+                alt="<?php echo $punt['titel']; ?>">
             </button>
 
             <!-- POP-UP MODAL -->
@@ -84,8 +85,9 @@ include 'assets/includes/connectie.php';
                 </div>
             </div>
         <?php endforeach; ?>
-
+        <div id="info"></div>
         <div id="overlay"></div>
+
     </main>
 
     <script>
