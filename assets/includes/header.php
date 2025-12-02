@@ -27,6 +27,10 @@ if (session_status() == PHP_SESSION_NONE) {
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
                 <div>inlog</div>
             </a>
+            <a href="admin.php">
+                <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+                <div>admin</div>
+            </a>
             <?php if (isset($_SESSION['login']) && $_SESSION['login'] === 'true'): ?>
             <a href="assets/includes/logout.php">
             <img src="assets/img/arrow.png" alt="W&amp;B Devs search">

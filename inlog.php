@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'assets/includes/connectie.php';
-include 'assets/includes/header.php';
 
 if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
 {
@@ -55,6 +54,7 @@ if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
         </style>
 </head>
 <body>
+    <?php include 'assets/includes/header.php'; ?>
 
 <!-- <br>
 

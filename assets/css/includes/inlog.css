@@ -1,4 +1,9 @@
-
+.inlogbackground {
+    min-height: 700px;
+    display: flex ;
+    justify-content: center;
+    align-items: center;
+}
 
 .inlogkaart {
     background-color: gray;
@@ -6,7 +11,7 @@
     background-size: contain;
     height: 480px;
     padding: 50px;
-    margin: 50px;
+    /* margin: 50px; */
     position: relative; 
 }
 
