@@ -4,9 +4,8 @@ document.addEventListener("scroll", (event) => {
   let place = Math.floor((window.scrollX + window.innerWidth / 4) / 1382.4);
   if (data && data.length > 0) {
     place = Math.min(place, data.length - 1);
-    info.innerHTML = data[place] + "<br>" + place;
+    info.innerHTML = data[place];
   }
-  console.log(place);
 });
 
 fetch("assets/includes/omschrijving-data.php")

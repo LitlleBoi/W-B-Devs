@@ -1,4 +1,4 @@
-@import "panorama.css";
-@import "pop-up.css";
-@import "x-y.css";
-@import "omschrijving.css";
+@import "includes/panorama.css";
+@import "includes/pop-up.css";
+@import "includes/omschrijving.css";
+@import "includes/side-bar.css";
