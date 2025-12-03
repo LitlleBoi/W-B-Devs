@@ -20,6 +20,7 @@ $result_panorama = $stmt_panorama->get_result();
 $info = [];
 if ($result_panorama && $result_panorama->num_rows > 0) {
     while ($row = $result_panorama->fetch_assoc()) {
+        $info[] = $row['titel'];
         $info[] = $row['beschrijving'];
     }
 } else {

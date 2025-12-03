@@ -22,14 +22,12 @@
 .content {
   background-color: #fefefe;
   padding: 1rem;
-  /* overflow-x: auto; */
-
   height: 90vh;
   display: flex;
-
   gap: 0;
 }
 
+/* Base toggle button styles */
 .toggle-btn {
   padding: 0.5rem 1rem;
   background-color: #3b82f6;
@@ -37,20 +35,33 @@
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
-  margin-bottom: 1rem;
-  position: absolute;
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  position: fixed;
   top: 10px;
-  left: 10px;
   z-index: 30;
-  transition: left 0.3s ease;
+  transition: left 0.3s ease, right 0.3s ease;
+}
+
+/* Open Button (outside sidebar) */
+.open-btn {
+  left: 10px;
+  background-color: #3b82f6; /* Blue */
+}
+
+/* Close Button (inside sidebar) */
+.close-btn {
+  right: 10px;
+  background-color: #ef4444; /* Red */
 }
 
 /* === DESKTOP MODE === */
 @media (min-width: 1024px) {
-  .grid {
-    grid-template-columns: 1fr;
-  }
-
   .menu {
     position: fixed;
     transform: translateX(0);
@@ -63,11 +74,20 @@
     padding-left: 260px;
   }
 
-  .toggle-btn {
-    left: 270px;
+  /* When sidebar is visible on desktop: */
+  /* Hide open button */
+  .grid:not(.menu-hidden-desktop) .open-btn {
+    display: none;
   }
 
-  /* Saat menu disembunyikan di desktop — konten full width */
+  /* Show close button */
+  .grid:not(.menu-hidden-desktop) .close-btn {
+    display: flex;
+    left: 250px; /* Position inside sidebar area */
+    right: auto;
+  }
+
+  /* When sidebar is hidden on desktop: */
   .grid.menu-hidden-desktop .menu {
     transform: translateX(-100%);
   }
@@ -76,14 +96,42 @@
     padding-left: 0;
   }
 
-  .grid.menu-hidden-desktop .toggle-btn {
+  /* Show open button */
+  .grid.menu-hidden-desktop .open-btn {
+    display: flex;
     left: 10px;
+  }
+
+  /* Hide close button */
+  .grid.menu-hidden-desktop .close-btn {
+    display: none;
   }
 }
 
-/* === MOBILE MODE === */
+/* === MOBILE MODE === (default styles for mobile) */
+
+/* By default on mobile: show open button, hide close button */
+.open-btn {
+  display: flex;
+}
+
+.close-btn {
+  display: none;
+  left: 250px; /* Position inside sidebar when visible */
+  right: auto;
+}
+
+/* When sidebar is visible on mobile */
 .menu-visible .menu {
   transform: translateX(0);
+}
+
+.menu-visible .open-btn {
+  display: none;
+}
+
+.menu-visible .close-btn {
+  display: flex;
 }
 
 .overlay {
@@ -99,4 +147,9 @@
 .menu-visible .overlay {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Ensure buttons are always on top */
+.toggle-btn {
+  z-index: 100;
 }
