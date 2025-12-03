@@ -3,7 +3,11 @@
 $servername = "localhost";
 $username = "root";
 $password = ""; // Default for XAMPP
+
 $dbname = "w&b_devs-1";
+
+
+
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -12,6 +16,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
 
 // echo "Connected successfully to the database.<br>";
 
@@ -38,6 +43,7 @@ if ($result_panorama && $result_panorama->num_rows > 0) {
 } else {
     echo "0 results voor panorama";
 }
+
 
 //  Haal punten op  
 $stmt_punten = $conn->prepare("SELECT * FROM punten");
@@ -94,3 +100,7 @@ $stmt_punten->close();
 $stmt_bronnen->close();
 $conn->close();
 ?>
+
+
+?>
+
