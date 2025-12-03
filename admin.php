@@ -14,6 +14,7 @@
 
 
 <?php
+session_start();
 // simple access control: only allow when logged in
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
 	header('Location: inlog.php');
@@ -23,48 +24,44 @@ if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
 ?>
 
 <?php
-include 'connectie.php';
+include 'assets/includes/connectie.php';
 $sql = "SELECT * FROM panorama ORDER BY aangemaakt_op DESC";
 $result = $conn->query($sql);
 ?>
 
-	<?php include "header.php"; ?>
-	<div class="nieuw">
-    <a href="create.php">+ Nieuw character</a>
-	</div>
+	<?php include "assets/includes/header.php"; ?>
 
-    <h1>One Piece Characters</h1>
+    <h1>panorama</h1>
 
 	<div class="tabel">
     <table border="1" cellpadding="6" cellspacing="0">
         <tr>
             <th>ID</th>
             <th>Naam</th>
-            <th>Bounty</th>
+            <th>catalogusnummer</th>
             <th>Afbeelding</th>
             <th>Acties</th>
         </tr>
         <?php while ($row = $result->fetch_assoc()): ?>
         <tr>
-            <td><?= $row['product_id'] ?></td>
+            <td><?= $row['id'] ?></td>
             <td><?= htmlspecialchars($row['titel']) ?></td>
-            <td><?= htmlspecialchars($row['catalogsnummer']) ?></td>
+            <td><?= htmlspecialchars($row['catalogusnummer']) ?></td>
             <td>
-                <?php if (!empty($row['img'])): ?>
-                    <img src="uploads/<?= htmlspecialchars($row['afbeelding_url']) ?>" width="80">
+                <?php if (!empty($row['afbeelding_url'])): ?>
+                    <img src="<?= htmlspecialchars($row['afbeelding_url']) ?>" width="80">
                 <?php endif; ?>
             </td>
             <td>
 				<div class="adminlink">
-                <a href="bewerk.php?id=<?= $row['id'] ?>">Bewerk</a> |
-                <a href="delete.php?id=<?= $row['id'] ?>" onclick="return confirm('Weet je het zeker?');">Verwijder</a>
+                <a href="bewerk.php?id=<?= $row['id'] ?>">Bewerk</a> 
 				</div>
 			</td>
         </tr>
         <?php endwhile; ?>
     </table>
 	</div>
-	<?php include "footer.php"; ?>
+	<?php include "assets/includes/footer.php"; ?>
 
 
 

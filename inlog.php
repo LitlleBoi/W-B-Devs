@@ -56,7 +56,7 @@ if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
 <body>
     <?php include 'assets/includes/header.php'; ?>
 
-<!-- <br>
+
 
 <?php
 
@@ -77,7 +77,7 @@ if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
 
 $conn = null;
 
-?> -->
+?> 
 
 <div class="inlogbackground">
     <div class="inlogtekst">
