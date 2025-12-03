@@ -21,7 +21,7 @@ include 'assets/includes/connectie.php';
 
 
     <main>
-        <div id="layout" class="grid">
+        <div id="layout" class="grid menu-hidden-desktop">
 
             <aside id="menu" class="menu">
                 <div id="info"></div>

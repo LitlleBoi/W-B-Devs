@@ -3,6 +3,7 @@
   display: grid;
   grid-template-columns: 1fr;
   height: 100vh;
+  position: relative;
 }
 
 .menu {
@@ -21,7 +22,7 @@
 .content {
   background-color: #fefefe;
   padding: 1rem;
-  overflow-x: auto;
+  /* overflow-x: auto; */
 
   height: 90vh;
   display: flex;
@@ -41,6 +42,7 @@
   top: 10px;
   left: 10px;
   z-index: 30;
+  transition: left 0.3s ease;
 }
 
 /* === DESKTOP MODE === */
@@ -61,6 +63,10 @@
     padding-left: 260px;
   }
 
+  .toggle-btn {
+    left: 270px;
+  }
+
   /* Saat menu disembunyikan di desktop — konten full width */
   .grid.menu-hidden-desktop .menu {
     transform: translateX(-100%);
@@ -68,6 +74,10 @@
 
   .grid.menu-hidden-desktop .content {
     padding-left: 0;
+  }
+
+  .grid.menu-hidden-desktop .toggle-btn {
+    left: 10px;
   }
 }
 
