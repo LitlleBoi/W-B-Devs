@@ -5,17 +5,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="assets/css/includes/header.css" />
-    <link rel="stylesheet" href="assets/css/includes/start.css" />
-    <link rel="stylesheet" href="assets/css/includes/style.css" />
-    <link rel="stylesheet" href="assets/css/includes/footer.css" />
-</head>
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+
 
 <body>
-    <?php
-    include "assets/includes/header.php";
-    include "start.php";
+    <?php  
     include 'assets/includes/connectie.php'; 
+    include "assets/includes/header.php";
+
+  
     ?>
 
     <main id="content">
