@@ -5,11 +5,11 @@ if (session_status() == PHP_SESSION_NONE) {
 ?>
 <header>
     <div class="container">
-        <div class="search">
-            <a href="index.php">
-                <img src="assets/img/search.png" alt="W&amp;B Devs search">
-            </a>
-        </div>
+    <div id="search-bar" class="search-bar">
+        <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+        <div>Panorama</div>
+
+    </div>
         <div class="nav">
             <a href="index.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
