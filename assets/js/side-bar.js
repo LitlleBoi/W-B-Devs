@@ -5,14 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const closeBtn = document.getElementById("closeMenu");
   const overlay = document.querySelector(".overlay");
 
-  // Check if elements exist before proceeding
-  if (!layout || !openBtn || !closeBtn) {
-    console.error("Required elements not found. Check your HTML structure.");
-    return;
-  }
+  // Debug log
+  console.log("Sidebar script loaded");
+  console.log("Elements:", { layout, openBtn, closeBtn });
 
   // Open menu function
   function openMenu() {
+    console.log("Opening menu");
     if (window.innerWidth >= 1024) {
       // Desktop: remove hidden class
       layout.classList.remove("menu-hidden-desktop");
@@ -24,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Close menu function
   function closeMenu() {
+    console.log("Closing menu");
     if (window.innerWidth >= 1024) {
       // Desktop: add hidden class
       layout.classList.add("menu-hidden-desktop");
@@ -34,56 +34,42 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Event listeners
-  openBtn.addEventListener("click", openMenu);
-  closeBtn.addEventListener("click", closeMenu);
+  if (openBtn) {
+    openBtn.addEventListener("click", openMenu);
+  }
+
+  if (closeBtn) {
+    closeBtn.addEventListener("click", closeMenu);
+  }
 
   // Close menu when clicking overlay on mobile
   if (overlay) {
-    overlay.addEventListener("click", () => {
-      if (window.innerWidth < 1024) {
-        closeMenu();
-      }
-    });
+    overlay.addEventListener("click", closeMenu);
   }
 
-  // Optional: Close menu when pressing Escape key
+  // Close menu when pressing Escape key
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeMenu();
     }
   });
 
-  // Optional: Handle window resize
-  window.addEventListener("resize", () => {
+  // Initialize based on screen size
+  function initSidebar() {
     if (window.innerWidth >= 1024) {
-      // On desktop, ensure proper state
-      if (layout.classList.contains("menu-visible")) {
-        layout.classList.remove("menu-visible");
-        layout.classList.remove("menu-hidden-desktop");
-      }
+      // Desktop: show sidebar by default (as overlay)
+      layout.classList.remove("menu-visible");
+      layout.classList.remove("menu-hidden-desktop");
     } else {
-      // On mobile, ensure proper state
-      if (
-        !layout.classList.contains("menu-visible") &&
-        !layout.classList.contains("menu-hidden-desktop")
-      ) {
-        layout.classList.add("menu-hidden-desktop");
-      }
-    }
-  });
-
-  // Initialize based on current screen size
-  if (window.innerWidth >= 1024) {
-    // Desktop: sidebar visible by default
-    layout.classList.remove("menu-visible");
-    layout.classList.remove("menu-hidden-desktop");
-  } else {
-    // Mobile: sidebar hidden by default
-    if (
-      !layout.classList.contains("menu-visible") &&
-      !layout.classList.contains("menu-hidden-desktop")
-    ) {
+      // Mobile: hide sidebar by default
+      layout.classList.remove("menu-visible");
       layout.classList.add("menu-hidden-desktop");
     }
   }
+
+  // Initialize
+  initSidebar();
+
+  // Re-initialize on resize
+  window.addEventListener("resize", initSidebar);
 });

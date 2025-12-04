@@ -22,17 +22,19 @@ include 'assets/includes/connectie.php';
 
     <main>
         <div id="layout" class="grid menu-hidden-desktop">
-            <!-- Open Button (always visible when sidebar is closed) -->
+            <!-- Open Button - Shows when sidebar is closed -->
             <button id="openMenu" class="toggle-btn open-btn">
-                <span class="menu-icon">☰</span>
+                ☰
             </button>
 
-            <!-- Sidebar with Close Button inside -->
+            <!-- Sidebar - Overlay drawer -->
             <aside id="menu" class="menu">
+                <!-- Close Button - Inside sidebar -->
                 <button id="closeMenu" class="toggle-btn close-btn">
-                    <span class="menu-icon">×</span>
+                    ×
                 </button>
-                <div id="info"></div>
+                <div id="info">
+                    <div id="info"></div>
             </aside>
             <div class="content">
                 <?php foreach ($info as $panorama): ?>
