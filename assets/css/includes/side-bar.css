@@ -16,9 +16,41 @@
   left: 0;
   z-index: 1000; /* Very high z-index to be on top */
   transform: translateX(-100%);
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
   /* Important: Doesn't affect layout */
+}
+
+/* Sidebar slide-in animation */
+.menu-visible .menu,
+.grid:not(.menu-hidden-desktop) .menu {
+  animation: sidebarSlideIn 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+@keyframes sidebarSlideIn {
+  0% {
+    transform: translateX(-100%);
+  }
+  70% {
+    transform: translateX(10px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Sidebar slide-out animation */
+.grid.menu-hidden-desktop .menu:not(.menu-visible) {
+  animation: sidebarSlideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes sidebarSlideOut {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .content {
@@ -49,13 +81,36 @@
   position: fixed;
   top: 10px;
   z-index: 1001; /* Even higher than sidebar */
-  transition: left 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button hover animations */
+.toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-btn:active {
+  transform: scale(0.95);
 }
 
 /* Open Button */
 .open-btn {
   left: 10px;
   background-color: #3b82f6;
+  animation: buttonPulse 2s infinite;
+}
+
+@keyframes buttonPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
 }
 
 /* Close Button - inside sidebar */
@@ -64,6 +119,27 @@
   position: absolute;
   top: 10px;
   right: 10px;
+  animation: rotateIn 0.5s ease;
+}
+
+@keyframes rotateIn {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0) scale(1);
+  }
+}
+
+/* Button icon animations */
+.menu-icon {
+  transition: transform 0.3s ease;
+}
+
+.toggle-btn:hover .menu-icon {
+  transform: rotate(90deg);
 }
 
 /* === DESKTOP MODE === */
@@ -77,11 +153,13 @@
   /* Hide open button */
   .grid:not(.menu-hidden-desktop) .open-btn {
     display: none;
+    animation: fadeOut 0.3s ease;
   }
 
   /* Show close button inside sidebar */
   .grid:not(.menu-hidden-desktop) .close-btn {
     display: flex;
+    animation: fadeIn 0.3s ease 0.2s both;
   }
 
   /* When sidebar is hidden on desktop: */
@@ -92,11 +170,13 @@
   /* Show open button */
   .grid.menu-hidden-desktop .open-btn {
     display: flex;
+    animation: fadeIn 0.3s ease 0.2s both;
   }
 
   /* Hide close button */
   .grid.menu-hidden-desktop .close-btn {
     display: none;
+    animation: fadeOut 0.3s ease;
   }
 }
 
@@ -118,10 +198,35 @@
 
 .menu-visible .open-btn {
   display: none;
+  animation: fadeOut 0.3s ease;
 }
 
 .menu-visible .close-btn {
   display: flex;
+  animation: fadeIn 0.3s ease 0.2s both;
+}
+
+/* Fade animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
 }
 
 /* Overlay for mobile (optional dim effect) */
@@ -140,6 +245,16 @@
   .menu-visible .overlay {
     opacity: 1;
     pointer-events: auto;
+    animation: overlayFadeIn 0.3s ease;
+  }
+
+  @keyframes overlayFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }
 
@@ -148,4 +263,16 @@
   width: 100%;
   max-width: 100%;
   transition: none !important; /* No transitions on content */
+}
+
+/* Content dim animation when sidebar opens */
+.menu-visible .content,
+.grid:not(.menu-hidden-desktop) .content {
+  animation: contentDim 0.3s ease 0.1s both;
+}
+
+@keyframes contentDim {
+  to {
+    filter: brightness(0.95);
+  }
 }
