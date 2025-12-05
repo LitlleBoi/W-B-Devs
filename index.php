@@ -11,10 +11,11 @@
 </head>
 <?php
 include 'assets/includes/header.php';
-include 'start.php';
+
 include 'assets/includes/footer.php';
 ?>
 
 
 </body>
+
 </html>

@@ -33,16 +33,16 @@ if (session_status() == PHP_SESSION_NONE) {
                 <div>admin</div>
             </a>
             <?php if (isset($_SESSION['login']) && $_SESSION['login'] === 'true'): ?>
-            <a href="assets/includes/logout.php">
-            <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
-            <div>Logout</div>
-            </a>
+                <a href="assets/includes/logout.php">
+                    <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+                    <div>Logout</div>
+                </a>
             <?php endif; ?>
         </div>
         <div class="logo">
-            <a href="index.php">
+            <a href="start.php">
                 <img src="assets/img/klein-logo.png" alt="W&amp;B Devs Logo">
-            </a> 
+            </a>
         </div>
     </div>
 </header>

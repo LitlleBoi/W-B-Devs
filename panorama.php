@@ -7,7 +7,7 @@
     <title>Document</title>
 
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/pop-up.css">
+    <!-- <link rel="stylesheet" href="assets/css/pop-up.css"> -->
     <script src="assets/js/pop-up.js" defer></script>
     <script src="assets/js/omschrijving.js" defer></script>
 </head>
@@ -72,6 +72,9 @@ include 'assets/includes/header.php';
                                         <?php if (!empty($bron['referentie_tekst'])): ?>
                                             <p><?php echo $bron['referentie_tekst']; ?></p>
                                         <?php endif; ?>
+                                        <?php if (!empty($bron['catalogusnummer'])): ?>
+                                            <p> Catalogusnummer:<?php echo $bron['catalogusnummer']; ?></p>
+                                        <?php endif; ?>
 
                                         <?php if (!empty($bron['afbeelding'])): ?>
                                             <img src="<?php echo $bron['afbeelding']; ?>" alt="<?php echo $bron['titel']; ?>"
@@ -118,4 +121,5 @@ include 'assets/includes/header.php';
 include "assets/includes/footer.php";
 ?>
 </body>
+
 </html>

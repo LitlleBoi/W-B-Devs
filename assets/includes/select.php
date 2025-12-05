@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = ""; // Default for XAMPP
-$dbname = "w&b_devs";
+$dbname = "w&b_devs-1";
 
 
 
@@ -84,6 +84,7 @@ if ($result_bronnen && $result_bronnen->num_rows > 0) {
             'bron_type' => $row['bron_type'],
             'titel' => $row['titel'],
             'auteur' => $row['auteur'],
+            'catalogusnummer' => $row['catalogusnummer'],
             'publicatie_jaar' => $row['publicatie_jaar'],
             'afbeelding' => $row['bron-afbeelding'],
             'referentie_tekst' => $row['referentie_tekst']
@@ -99,6 +100,3 @@ $stmt_punten->close();
 $stmt_bronnen->close();
 $conn->close();
 ?>
-
-
-
