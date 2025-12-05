@@ -20,10 +20,10 @@ include 'assets/includes/header.php';
     <main id="panoramaFotos">
         <?php foreach ($info as $panorama): ?>
             <div class="panorama">
-                <h2><?php echo $panorama['titel']; ?></h2>
+                <!-- <h2><?php echo $panorama['titel']; ?></h2> -->
 
                 <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
-                <h2><?php echo $panorama['pagina']; ?></h2>
+                <!-- <h2><?php echo $panorama['pagina']; ?></h2> -->
             </div>
         <?php endforeach; ?>
 

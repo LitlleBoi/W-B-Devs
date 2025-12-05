@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panorama Explorer - Welcome</title>
+    <link rel="stylesheet" href="assets/css/start.css">
     <style>
         * {
             margin: 0;

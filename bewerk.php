@@ -20,19 +20,38 @@ $result = $stmt->get_result();
 $row = $result->fetch_assoc();
 if (!$row) { echo "Niet gevonden"; exit; }
 
+// Haal bronnen voor dit punt
+$bronnen = [];
+$stmt = $conn->prepare("SELECT * FROM bronnen WHERE punt_id = ?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+$result = $stmt->get_result();
+while ($bron = $result->fetch_assoc()) {
+    $bronnen[] = $bron;
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $x_coordinaat = $_POST['x_coordinaat'];
     $y_coordinaat = $_POST['y_coordinaat'];
     $hoogte = $_POST['hoogte'];
     $breedte = $_POST['breedte'];
 
-
-
-    $stmt = $conn->prepare("UPDATE punten
-        SET x_coordinaat=?, y_coordinaat=?, hoogte=?, breedte=?
-        WHERE id=?");
+    // Update punten
+    $stmt = $conn->prepare("UPDATE punten SET x_coordinaat=?, y_coordinaat=?, hoogte=?, breedte=? WHERE id=?");
     $stmt->bind_param("ssssi", $x_coordinaat, $y_coordinaat, $hoogte, $breedte, $id);
     $stmt->execute();
+
+    // Update bronnen
+    if (isset($_POST['bronnen']) && is_array($_POST['bronnen'])) {
+        foreach ($_POST['bronnen'] as $bron_id => $bron_data) {
+            if (isset($bron_data['referentie_tekst'])) {
+                $referentie_tekst = $bron_data['referentie_tekst'];
+                $stmt = $conn->prepare("UPDATE bronnen SET referentie_tekst=? WHERE id=?");
+                $stmt->bind_param("si", $referentie_tekst, $bron_id);
+                $stmt->execute();
+            }
+        }
+    }
 
     header("Location: admin.php");
     exit;
@@ -71,7 +90,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <input type="text" class="form-control" id="breedte" name="breedte" value="<?= htmlspecialchars($row['breedte']) ?>" required>
     </div>
 
-
+    <?php foreach ($bronnen as $bron): ?>
+    <div class="mb-3">
+        <label for="bronnen[<?= $bron['id'] ?>][referentie_tekst]" class="form-label">Referentie tekst voor bron: <?= htmlspecialchars($bron['titel']) ?>:</label>
+        <input type="text" class="form-control" id="bronnen[<?= $bron['id'] ?>][referentie_tekst]" name="bronnen[<?= $bron['id'] ?>][referentie_tekst]" value="<?= htmlspecialchars($bron['referentie_tekst']) ?>">
+    </div>
+    <?php endforeach; ?>
 
     <button type="submit" class="btn btn-primary">Opslaan</button>
 </form>
