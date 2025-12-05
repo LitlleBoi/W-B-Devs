@@ -1,60 +1,78 @@
 function updatePointPositions() {
-  const points = document.querySelectorAll(".punt");
-  const panorama = document.querySelector(".panorama img");
+  console.log("=== Positioning points ===");
 
-  if (!panorama) {
-    console.log("Geen panorama afbeelding gevonden");
-    return;
-  }
+  const panoramas = document.querySelectorAll(".panorama");
 
-  const imgWidth = panorama.offsetWidth;
-  const imgHeight = panorama.offsetHeight;
+  panoramas.forEach((panorama) => {
+    const panoramaId = panorama.getAttribute("data-panorama-id");
+    const img = panorama.querySelector("img");
 
-  // console.log("Huidige afbeelding grootte:", imgWidth, "x", imgHeight);
+    if (!img) return;
 
-  const originalWidth = 1704; // originele breedte in pixels
-  const originalHeight = 756; // originele hoogte in pixels
+    const imgWidth = img.offsetWidth;
+    const imgHeight = img.offsetHeight;
 
-  points.forEach((point) => {
-    const originalX = parseInt(point.getAttribute("data-x"));
-    const originalY = parseInt(point.getAttribute("data-y"));
+    console.log(`Panorama ${panoramaId}: ${imgWidth}x${imgHeight}`);
 
-    // Bereken percentages
-    let xPercent = (originalX / originalWidth) * 100;
-    let yPercent = (originalY / originalHeight) * 100;
+    const points = panorama.querySelectorAll(".punt");
 
-    // xPercent = xPercent - 6;
-    // yPercent = yPercent - 1;
-    // if (window.innerWidth >= 1200) {
-    //   xPercent = xPercent - 10;
-    //   yPercent = yPercent - 1;
-    // }
-    // console.log(
-    //   `Punt ${point.getAttribute("data-modal-target")}:`,
-    //   `Origineel: ${originalX},${originalY} ->`,
-    //   `Gecorrigeerd: ${xPercent.toFixed(1)}%, ${yPercent.toFixed(1)}%`
-    // );
+    if (points.length === 0) {
+      console.log(`No points for panorama ${panoramaId}`);
+      return;
+    }
 
-    // Pas positie aan
-    point.style.left = xPercent + "%";
-    point.style.top = yPercent + "%";
+    console.log(`${points.length} points for panorama ${panoramaId}`);
+
+    points.forEach((point, index) => {
+      const dbX = parseFloat(point.getAttribute("data-x"));
+      const dbY = parseFloat(point.getAttribute("data-y"));
+
+      console.log(`Point ${index}: ${dbX}, ${dbY}`);
+
+      if (!isNaN(dbX) && !isNaN(dbY)) {
+        // SIMPLE: If coordinates are big (like 50000), scale down
+        // If coordinates are small (like 0-800), use directly
+
+        let x, y;
+
+        if (dbX > 2000) {
+          // Big coordinates - scale down by 22 (50000/2287 ≈ 22)
+          x = dbX / 22;
+          y = dbY / 22;
+        } else {
+          // Small coordinates - use directly
+          x = dbX;
+          y = dbY;
+        }
+
+        // Ensure within bounds
+        x = Math.max(0, Math.min(x, imgWidth));
+        y = Math.max(0, Math.min(y, imgHeight));
+
+        console.log(`Position: ${x}px, ${y}px`);
+
+        point.style.left = x + "px";
+        point.style.top = y + "px";
+        point.style.backgroundColor = "red";
+        point.style.border = "2px solid yellow";
+      }
+    });
   });
 }
 
-// Voer uit wanneer pagina laadt
+// Run multiple times
 document.addEventListener("DOMContentLoaded", function () {
-  // console.log("DOM geladen - update punten posities");
-  updatePointPositions();
+  setTimeout(updatePointPositions, 100);
+  setTimeout(updatePointPositions, 500);
+  setTimeout(updatePointPositions, 1000);
 });
 
-// Voer uit wanneer scherm van grootte verandert
 window.addEventListener("resize", function () {
-  // console.log("Scherm grootte veranderd - update punten posities");
   setTimeout(updatePointPositions, 100);
 });
 
-// Voer uit wanneer afbeelding geladen is
-document.querySelector(".panorama img")?.addEventListener("load", function () {
-  // console.log("Afbeelding geladen - update punten posities");
-  updatePointPositions();
+document.querySelectorAll(".panorama img").forEach((img) => {
+  img.addEventListener("load", function () {
+    setTimeout(updatePointPositions, 100);
+  });
 });
