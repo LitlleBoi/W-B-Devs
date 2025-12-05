@@ -1,4 +1,42 @@
 @import "includes/panorama.css";
 @import "includes/pop-up.css";
 @import "includes/omschrijving.css";
-@import "includes/side-bar.css";
+@import "includes/header.css";
+@import "includes/footer.css";
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 100px;
+  padding-bottom: 30px;
+  background-color: #f6f6f6;
+}
+
+.no-vertical-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.panorama-minimap {
+  position: absolute;
+  right: 10px;
+  bottom: 75px;
+  width: 220px;
+  height: 30px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 2px solid red; /* tijdelijk rood */
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  z-index: 2000;
+}
+
+.panorama-minimap-viewport {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 3px;
+  pointer-events: none;
+}
