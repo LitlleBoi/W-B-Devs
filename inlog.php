@@ -37,11 +37,11 @@ if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="assets/css/includes/header.css" />
-    <link rel="stylesheet" href="assets/css/includes/start.css" />
-    <link rel="stylesheet" href="assets/css/includes/style.css" />
-    <link rel="stylesheet" href="assets/css/includes/inlog.css" />
-    <link rel="stylesheet" href="assets/css/includes/footer.css" />
+
+
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/inlog.css" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
@@ -56,23 +56,7 @@ if ((isset($_GET["email"]))&&(isset($_GET["wachtwoord"])))
 <body>
     <?php include 'assets/includes/header.php'; ?>
 
-
-
 <?php
-
-
-    $stmt = $conn->prepare("SELECT * FROM gebruikers");
-    $stmt->execute();
-    $res = $stmt->get_result();
-
-    // print all values in $result (if any)
-        if ($res) {
-                while ($v = $res->fetch_assoc()) {
-                        echo "<div class='row'>rol:  " . $v['rol']. " - id:  " . $v['id']. " - email: " . $v['email']. " - Wachtwoord: " . $v['wachtwoord']. "</div>";
-                }
-                $res->free();
-        }
-
   
 
 $conn = null;

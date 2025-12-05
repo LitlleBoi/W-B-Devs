@@ -13,15 +13,16 @@ if (session_status() == PHP_SESSION_NONE) {
         <div class="nav">
             <a href="index.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+                <div>start</div>
+            </a>
+            <a href="panorama.php">
+                <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
                 <div>Panorama</div>
             </a>
-            <a href="index.php">
-                <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
+            <a href="https://hetutrechtsarchief.nl">
+                <img src="assets/img/arrow.png" alt="W&B Devs search">
                 <div>Utrechts Archief</div>
             </a>
-            <a href="index.php">
-                <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
-                <div>contact</div>
             </a>
             <a href="inlog.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
@@ -38,10 +39,10 @@ if (session_status() == PHP_SESSION_NONE) {
             </a>
             <?php endif; ?>
         </div>
-        <!-- <div class="logo">
+        <div class="logo">
             <a href="index.php">
-                <img src="assets/img/logo.png" alt="W&amp;B Devs Logo">
-            </a> -->
+                <img src="assets/img/klein-logo.png" alt="W&amp;B Devs Logo">
+            </a> 
         </div>
     </div>
 </header>
