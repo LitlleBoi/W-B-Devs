@@ -3,8 +3,8 @@
   width: 100%;
 }
 .panorama img {
-  width: 90vw;
-  height: auto;
+  width: auto;
+  height: 25vw;
   display: block;
 }
 
@@ -16,9 +16,10 @@
 }
 
 main {
-  margin-top: 200px;
   padding: 20px;
   display: flex;
-
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
   position: relative;
 }

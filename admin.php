@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link rel="stylesheet" href="assets/css/includes/header.css" />
-    <link rel="stylesheet" href="assets/css/includes/style.css" />
+    <link rel="stylesheet" href="assets/css/style.css" />
     <link rel="stylesheet" href="assets/css/includes/footer.css" />
 </head>
 
@@ -31,7 +31,7 @@ $result = $conn->query($sql);
 
 	<?php include "assets/includes/header.php"; ?>
 
-    <h1>panorama</h1>
+    <h1 class="admin-titel">panorama</h1>
 
 	<div class="tabel">
     <table border="1" cellpadding="6" cellspacing="0">

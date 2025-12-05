@@ -1,6 +1,11 @@
 header {
     background-color: rgb(255, 255, 255);
     height: 100px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .logo {
@@ -10,8 +15,8 @@ header {
 
 .logo img {
     margin-top: 30px;
-    height: 130px;
-    margin-left: 100px;
+    height: 70px;
+    /* margin-left: 200px; */
 }
 
 .container{
@@ -22,61 +27,56 @@ header {
 
 .nav {
     display: flex;
-    flex-direction: row;
     font-size: 18px;
-    gap: 50px;
+    gap: 20px;
     padding-left: 0px;
-    padding-bottom: 50px;
-    flex-wrap: wrap;
     font-family: Arial, sans-serif;
+    flex-wrap: nowrap;
 }
 
-.search-bar img{
-    width: 30px;
-    height: 30px;
-    padding-left: 20px;
-    padding-top: 20px;
+.search img {
+    width:30px;
+    height:30px;
 }
 
-.search-bar {
+.search {
     margin-right: 200px;
     width: 70px;
     height: 70px;
     background-color: #288074;
+    padding: 20px;
     margin-left: 150px;
     margin-top: 30px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .nav a {
+    text-decoration: underline;
+    padding-right: 10px;
     height: 100px;
     color: rgb(0, 0, 0);
-    text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
     font-weight: bold;
+    
 }
 
 .nav a:hover {
     transition: 1s;
-    text-decoration: underline;
+    background-color: #e4e6e6;
+
 }
 
-.search-bar {
-    display: none;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 20px;
-    text-align: center;
-    border-bottom: 2px solid #FF2C2C;
-}
-
-.search-bar form {
+.search form {
     display: inline-flex;
     gap: 10px;
     align-items: center;
 }
 
-.search-bar input[type="text"] {
+.search input[type="text"] {
     padding: 10px;
     border: 2px solid #FF2C2C;
     border-radius: 5px;
@@ -84,7 +84,7 @@ header {
     width: 300px;
 }
 
-.search-bar button {
+.search button {
     padding: 10px 20px;
     background-color: #FF2C2C;
     color: white;
@@ -94,6 +94,6 @@ header {
     font-size: 16px;
 }
 
-.search-bar button:hover {
+.search button:hover {
     background-color: #cc0000;
 }
