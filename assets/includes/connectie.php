@@ -25,6 +25,7 @@ if ($result_panorama && $result_panorama->num_rows > 0) {
     while ($row = $result_panorama->fetch_assoc()) {
         $info[] = [
             'id' => $row['id'],
+            'catalogusnummer' => $row['catalogusnummer'],
             'titel' => $row['titel'],
             'afbeelding' => $row['afbeelding_url'] ?? '',
             'beschrijving' => $row['beschrijving'],
