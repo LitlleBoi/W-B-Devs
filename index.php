@@ -10,7 +10,7 @@
     <script src="assets/js/side-bar.js" defer></script>
     <script src="assets/js/pop-up.js" defer></script>
     <script src="assets/js/omschrijving.js" defer></script>
-    <!-- <script src="assets/js/recoords.js" defer></script> -->
+    <script src="assets/js/recoords.js" defer></script>
 </head>
 <?php
 include 'assets/includes/connectie.php';

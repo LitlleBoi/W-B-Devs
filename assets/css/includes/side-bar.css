@@ -513,29 +513,35 @@
   }
 }
 /* Fix z-index issues */
+/* Z-index hierarchy fix */
 .menu {
-  z-index: 10000 !important;
-  pointer-events: auto !important;
+  z-index: 1000; /* Sidebar onder popups */
 }
 
-.open-btn,
-.close-btn {
-  z-index: 10001 !important;
-  pointer-events: auto !important;
+/* Popups moeten boven sidebar zijn */
+.modal {
+  z-index: 1100 !important; /* Hoger dan sidebar */
+  position: fixed !important;
 }
 
-.overlay {
-  z-index: 9999 !important;
+.modal.active {
+  z-index: 1101 !important;
 }
 
-/* Prevent clicks from passing through */
-.menu * {
-  pointer-events: auto !important;
+/* Overlay voor popups moet ook boven sidebar zijn */
+.modal-overlay {
+  z-index: 1099 !important; /* Net onder popup, maar boven sidebar */
 }
 
-/* Ensure content doesn't interfere */
+/* Sidebar open/close button */
+.open-btn {
+  z-index: 1001; /* Button boven sidebar maar onder popups */
+}
+
+/* Content area */
 .content {
-  pointer-events: auto;
+  position: relative;
+  z-index: 1;
 }
 
 /* Fix for iPad/laptop */

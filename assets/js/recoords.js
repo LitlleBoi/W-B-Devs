@@ -12,7 +12,7 @@ function updatePointPositions() {
 
   // console.log("Huidige afbeelding grootte:", imgWidth, "x", imgHeight);
 
-  const originalWidth = 1704; // originele breedte in pixels
+  const originalWidth = 1382.4; // originele breedte in pixels
   const originalHeight = 756; // originele hoogte in pixels
 
   points.forEach((point) => {
@@ -23,17 +23,17 @@ function updatePointPositions() {
     let xPercent = (originalX / originalWidth) * 100;
     let yPercent = (originalY / originalHeight) * 100;
 
-    // xPercent = xPercent - 6;
-    // yPercent = yPercent - 1;
-    // if (window.innerWidth >= 1200) {
-    //   xPercent = xPercent - 10;
-    //   yPercent = yPercent - 1;
-    // }
-    // console.log(
-    //   `Punt ${point.getAttribute("data-modal-target")}:`,
-    //   `Origineel: ${originalX},${originalY} ->`,
-    //   `Gecorrigeerd: ${xPercent.toFixed(1)}%, ${yPercent.toFixed(1)}%`
-    // );
+    xPercent = xPercent - 6;
+    yPercent = yPercent - 1;
+    if (window.innerWidth >= 1200) {
+      xPercent = xPercent - 10;
+      yPercent = yPercent - 1;
+    }
+    console.log(
+      `Punt ${point.getAttribute("data-modal-target")}:`,
+      `Origineel: ${originalX},${originalY} ->`,
+      `Gecorrigeerd: ${xPercent.toFixed(1)}%, ${yPercent.toFixed(1)}%`
+    );
 
     // Pas positie aan
     point.style.left = xPercent + "%";
