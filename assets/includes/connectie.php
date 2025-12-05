@@ -13,10 +13,8 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// echo "Connected successfully to the database.<br>";
-
 //  Haal panorama gegevens op
-$stmt_panorama = $conn->prepare("SELECT * FROM panorama");
+$stmt_panorama = $conn->prepare("SELECT * FROM panorama ORDER BY pagina ASC");
 $stmt_panorama->execute();
 $result_panorama = $stmt_panorama->get_result();
 
@@ -50,6 +48,7 @@ if ($result_punten && $result_punten->num_rows > 0) {
     while ($row = $result_punten->fetch_assoc()) {
         $punten[] = [
             'id' => $row['id'],
+            'panorama_id' => $row['panorama_id'], 
             'titel' => $row['titel'],
             'x' => $row['x_coordinaat'] ?? '',
             'y' => $row['y_coordinaat'] ?? '',

@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Panorama</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <!-- <link rel="stylesheet" href="assets/css/pop-up.css"> -->
 
     <script src="assets/js/side-bar.js" defer></script>
     <script src="assets/js/pop-up.js" defer></script>
@@ -17,57 +18,45 @@ include 'assets/includes/connectie.php';
 ?>
 
 <body>
-
-
-
     <main>
         <div id="layout" class="grid menu-hidden-desktop">
-            <!-- Open Button - Shows when sidebar is closed -->
-            <button id="openMenu" class="toggle-btn open-btn">
-                ☰
-            </button>
+            <button id="openMenu" class="toggle-btn open-btn">☰</button>
 
-            <!-- Sidebar - Overlay drawer -->
             <aside id="menu" class="menu">
-                <!-- Close Button - Inside sidebar -->
-                <button id="closeMenu" class="toggle-btn close-btn">
-                    ×
-                </button>
-                <div id="info">
-                    <div id="info"></div>
+                <button id="closeMenu" class="toggle-btn close-btn">×</button>
+                <div id="info"></div>
             </aside>
+
             <div class="content">
                 <?php foreach ($info as $panorama): ?>
-                    <div class="panorama">
-                        <h2><?php echo $panorama['titel']; ?></h2>
-
+                    <div class="panorama" data-panorama-id="<?php echo $panorama['id']; ?>">
                         <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
-                        <h2><?php echo $panorama['pagina']; ?></h2>
+
+                        <?php foreach ($punten as $punt): ?>
+                            <?php if ($punt['panorama_id'] == $panorama['id']): ?>
+                                <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt"
+                                    data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
+                                    data-panorama-id="<?php echo $punt['panorama_id']; ?>" style="height:<?php echo $punt['hoogte']; ?>px; 
+                                               width:<?php echo $punt['breedte']; ?>px;"
+                                    title="<?php echo $punt['titel']; ?>">
+                                </button>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
                     </div>
                 <?php endforeach; ?>
 
                 <?php foreach ($punten as $punt): ?>
-                    <!-- KNOP OP DE KAART -->
-                    <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt" style="top:<?php echo $punt['y']; ?>px; left:<?php echo $punt['x']; ?>px;
-                    height:<?php echo $punt['hoogte']; ?>px; width:<?php echo $punt['breedte']; ?>px;"
-                        alt="<?php echo $punt['titel']; ?>">
-                    </button>
-
-                    <!-- POP-UP MODAL -->
                     <div class="modal" id="modal-<?php echo $punt['id']; ?>">
                         <div class="modal-header">
                             <div class="titel"><?php echo $punt['titel']; ?></div>
                             <button data-close-button class="close-button">&times;</button>
                         </div>
                         <div class="modal-body">
-                            <!-- PUNT BESCHRIJVING -->
                             <div class="punt-beschrijving">
                                 <?php echo $punt['omschrijving']; ?>
                             </div>
 
-                            <!-- BRONNEN SECTIE -->
                             <?php
-                            // Zoek bronnen voor dit punt
                             $gevonden_bronnen = [];
                             foreach ($bronnen as $bron) {
                                 if ($bron['punt_id'] == $punt['id']) {
@@ -107,24 +96,46 @@ include 'assets/includes/connectie.php';
             </div>
 
             <div id="overlay" class="overlay"></div>
-
-
         </div>
     </main>
 
-    <script>
-        document.addEventListener('click', function (event) {
-            let container = document.querySelector('main');
-            const rect = container.getBoundingClientRect();
-
-            // Position relative to the main container
-            const xRelativeToContainer = event.clientX - rect.left;
-            const yRelativeToContainer = event.clientY - rect.top;
-
-            console.log('X', xRelativeToContainer.toFixed(0), 'Y', yRelativeToContainer.toFixed(2));
-        });
-    </script>
-
 </body>
+<script>
+    document.addEventListener('click', function (event) {
+        // Find clicked panorama image
+        const clickedElement = event.target;
+        const panorama = clickedElement.closest('.panorama');
+
+        if (panorama) {
+            const img = panorama.querySelector('img');
+            const imgRect = img.getBoundingClientRect();
+
+            // Calculate position relative to IMAGE, not container
+            const xRelativeToImage = event.clientX - imgRect.left;
+            const yRelativeToImage = event.clientY - imgRect.top;
+
+            console.log('CLICK ON IMAGE:');
+            console.log('  Image:', img.src);
+            console.log('  Image position:', imgRect.left, imgRect.top);
+            console.log('  Image size:', img.offsetWidth, 'x', img.offsetHeight);
+            console.log('  Click on image at:', xRelativeToImage.toFixed(0), 'X', yRelativeToImage.toFixed(0));
+
+            // Show visual feedback
+            const marker = document.createElement('div');
+            marker.style.position = 'absolute';
+            marker.style.left = (xRelativeToImage - 10) + 'px';
+            marker.style.top = (yRelativeToImage - 10) + 'px';
+            marker.style.width = '20px';
+            marker.style.height = '20px';
+            marker.style.backgroundColor = 'red';
+            marker.style.border = '2px solid yellow';
+            marker.style.borderRadius = '50%';
+            marker.style.zIndex = '9999';
+            panorama.appendChild(marker);
+
+            setTimeout(() => marker.remove(), 3000);
+        }
+    });
+</script>
 
 </html>
