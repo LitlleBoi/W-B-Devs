@@ -1,6 +1,6 @@
 .adminlink a:hover {
     transition: 0.3s; 
-    background-color: rgb(219, 120, 84);
+
     border-radius: 10%;
     padding-top: 3px;
     padding-bottom: 3px;
@@ -16,13 +16,16 @@ a:-webkit-any-link {
     display: flex;
     justify-content: center;
     margin: 0 auto;
+    margin-top: 50px;
     margin-bottom: 50px;
     width: 50%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ceffd8e6;
+    border-radius: 20px;
 }
 
 .tabel table {
-    background-color: #ceffd8e6;
+    background-color: #e7ffebe6;
     width: 50%;
     min-width: 600px;
     border-collapse: collapse;

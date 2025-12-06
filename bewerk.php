@@ -20,33 +20,14 @@ $result1 = $stmt1->get_result();
 $row = $result1->fetch_assoc();
 if (!$row) { echo "Niet gevonden"; exit; }
 
+// Haal punt op
 $stmt3 = $conn->prepare("SELECT * FROM punten WHERE panorama_id = ?");
 $stmt3->bind_param("i", $id);
 $stmt3->execute();
 $result3 = $stmt3->get_result();
 $row = $result3->fetch_assoc();
-if (!$row) { echo "Niet gevonden"; exit; }
 
 
-//  Haal punten op  
-$stmt_punten = $conn->prepare("SELECT * FROM punten WHERE panorama_id");
-$stmt_punten->execute();
-$result_punten = $stmt_punten->get_result();
-
-$punten = [];
-if ($result_punten && $result_punten->num_rows > 0) {
-    while ($row = $result_punten->fetch_assoc()) {
-        $punten[] = [
-            'panorama_id' => $row['panorama_id'],
-            'titel' => $row['titel'],
-            'x' => $row['x_coordinaat'] ?? '',
-            'y' => $row['y_coordinaat'] ?? '',
-            'hoogte' => $row['hoogte'] ?? '',
-            'breedte' => $row['breedte'] ?? '',
-            'omschrijving' => $row['omschrijving'],
-        ];
-    }
-}
 
 // Haal bronnen voor dit punt
 $stmt_bronnen = $conn->prepare("SELECT * FROM bronnen WHERE punt_id = ?");
@@ -56,12 +37,11 @@ $result_bronnen = $stmt_bronnen->get_result();
 
 $bronnen = [];
 if ($result_bronnen && $result_bronnen->num_rows > 0) {
-    while ($row = $result_bronnen->fetch_assoc()) {
+    while ($bron_row = $result_bronnen->fetch_assoc()) {
         $bronnen[] = [
-            'id' => $row['id'],
-            'referentie_tekst' => $row['referentie_tekst'],
-            'titel' => $row['titel'],
-            'catalogsnummer' => $row['catalogsnummer']
+            'id' => $bron_row['id'],
+            'referentie_tekst' => $bron_row['referentie_tekst'] ?? '',
+            'titel' => $bron_row['titel'] ?? '',
         ];
     }
 }
@@ -105,13 +85,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
 <?php include "assets/includes/header.php"; ?>
 
-<h1>Bewerk Punt</h1>
+<div class="tabel">
 <form method="post" class="mb-3">
+    <?php if (!empty($bronnen)): ?>
+        <br></br>
+        <h2>Bewerk Punt</h2>
     <div class="mb-3">
         <label for="panorama_id" class="form-label">pagina:</label>
         <input type="text" class="form-control" id="panorama_id" name="panorama_id" value="<?php echo htmlspecialchars($row['panorama_id']); ?>" required>
     </div>
-    
+
     <div class="mb-3">
         <label for="x_coordinaat" class="form-label">x_coordinaat:</label>
         <input type="text" class="form-control" id="x_coordinaat" name="x_coordinaat" value="<?php echo htmlspecialchars($row['x_coordinaat']); ?>" required>
@@ -133,29 +116,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     </div>
 
     <?php foreach ($bronnen as $bron): ?>
+    <?php if (is_array($bron) && isset($bron['id'])): ?>
+
+        <h2>bronnen</h2>
     <div class="mb-3">
-        <label for="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]" class="form-label">Referentie tekst voor bron: <?php echo htmlspecialchars($bron['titel']); ?>:</label>
-        <input type="text" class="form-control" id="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]" name="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]" value="<?php echo htmlspecialchars($bron['referentie_tekst']); ?>">
+        <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" class="form-label"><br>Id: <?php echo htmlspecialchars($bron['id'] ?? ''); ?>:</br> Titel voor bron:</label>
+        <input type="text" class="form-control" id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" value="<?php echo htmlspecialchars($bron['titel'] ?? ''); ?>">
     </div>
 
     <div class="mb-3">
-        <label for="bronnen[<?php echo $bron['id']; ?>][titel]" class="form-label">Titel voor bron: <?php echo htmlspecialchars($bron['titel']); ?>:</label>
-        <input type="text" class="form-control" id="bronnen[<?php echo $bron['id']; ?>][titel]" name="bronnen[<?php echo $bron['id']; ?>][titel]" value="<?php echo htmlspecialchars($bron['titel']); ?>">
+        <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" class="form-label">Referentie tekst voor bron:</label>
+        <input type="text" class="form-control" id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" value="<?php echo htmlspecialchars($bron['referentie_tekst'] ?? ''); ?>">
     </div>
-
-    <div class="mb-3">
-        <label for="bronnen[<?php echo $bron['id']; ?>][catalogsnummer]" class="form-label">catalogsnummer: <?php echo htmlspecialchars($bron['catalogsnummer']); ?>:</label>
-        <input type="text" class="form-control" id="bronnen[<?php echo $bron['id']; ?>][catalogsnummer]" name="bronnen[<?php echo $bron['id']; ?>][catalogsnummer]" value="<?php echo htmlspecialchars($bron['catalogsnummer']); ?>">
-    </div>
-
+    <?php endif; ?>
     <?php endforeach; ?>
+    <?php endif; ?>
 
     <button type="submit" class="btn btn-primary">Opslaan</button>
+    <a href="admin.php" class="btn btn-secondary">Terug</a>
 </form>
-<a href="admin.php" class="btn btn-secondary">Terug</a>
 
 <?php include "assets/includes/footer.php"; ?>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </div>
 
 
 </body>
