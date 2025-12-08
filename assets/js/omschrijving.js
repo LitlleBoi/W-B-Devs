@@ -1,6 +1,6 @@
 // Initialize variables
 let panoramaData = [];
-let panoramaWidth = 1382.4;
+let panoramaWidth = 1182.4;
 let totalPanoramas = 0;
 let isInitialized = false;
 
@@ -110,9 +110,21 @@ function detectPanoramaWidth() {
 function getCurrentPage() {
   const scrollX = window.scrollX;
   const viewportWidth = window.innerWidth;
-  const viewportCenter = scrollX + viewportWidth / 4;
+  const totalWidth = panoramaWidth * totalPanoramas;
 
-  let pageIndex = Math.floor(viewportCenter / panoramaWidth);
+  // Bereken welk deel van de viewport we gebruiken
+  // 0.3 = 30% van links (werkt goed voor begin)
+  // Voor het einde passen we dit dynamisch aan
+  let viewportPosition = 0.3;
+
+  // Als we aan het einde zijn, gebruik een hogere positie
+  if (scrollX > totalWidth * 0.7) {
+    viewportPosition = 0.7; // 70% van links (rechterkant van scherm)
+  }
+
+  const referencePoint = scrollX + viewportWidth * viewportPosition;
+
+  let pageIndex = Math.floor(referencePoint / panoramaWidth);
   pageIndex = Math.max(0, Math.min(pageIndex, totalPanoramas - 1));
 
   return pageIndex;
