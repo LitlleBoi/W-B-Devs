@@ -3,9 +3,9 @@
   width: 100%;
 }
 .panorama img {
-  width: auto;
+  /* width: auto;
   height: 25vw;
-  display: block;
+  display: block; */
 }
 
 .panorama {

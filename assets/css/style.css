@@ -16,20 +16,51 @@ body {
 .no-vertical-scroll {
   overflow-x: auto;
   overflow-y: hidden;
+  height: 100vh;
 }
 
+/* Sidebar overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease-in-out;
+}
+
+.sidebar-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Prevent body scroll when sidebar is open */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* Minimap styles */
 .panorama-minimap {
-  position: absolute;
+  position: fixed;
   right: 10px;
   bottom: 75px;
   width: 220px;
   height: 30px;
   background: rgba(255, 255, 255, 0.85);
-  border: 2px solid red; /* tijdelijk rood */
+  border: 2px solid #333;
   border-radius: 4px;
   overflow: hidden;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-  z-index: 2000;
+  z-index: 1999;
+  cursor: pointer;
+}
+
+.panorama-minimap:hover {
+  border-color: red;
 }
 
 .panorama-minimap-viewport {
@@ -40,4 +71,37 @@ body {
   background: rgba(0, 0, 0, 0.35);
   border-radius: 3px;
   pointer-events: none;
+}
+
+/* Panorama container styles */
+.panorama-container {
+  width: 100%;
+  height: calc(100vh - 130px);
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.panorama-strip {
+  display: inline-block;
+  white-space: nowrap;
+  height: 100%;
+}
+
+.panorama {
+  display: inline-block;
+  position: relative;
+  height: 100%;
+}
+
+.panorama img {
+  height: 100%;
+  width: auto;
+  max-width: none;
+}
+
+/* Toggle button visibility */
+.toggle-btn.hidden {
+  display: none !important;
 }

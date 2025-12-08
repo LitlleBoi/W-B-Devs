@@ -1,46 +1,79 @@
-const openModalButtons = document.querySelectorAll("[data-modal-target]");
-const closeModalButtons = document.querySelectorAll("[data-close-button]");
-const overlay = document.getElementById("overlay");
+document.addEventListener("DOMContentLoaded", function () {
+  // Open modal when clicking on a point
+  document.querySelectorAll("[data-modal-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const modalId = button.getAttribute("data-modal-target");
+      const modal = document.querySelector(modalId);
+      const overlay = document.getElementById("overlay");
 
-openModalButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const modal = document.querySelector(button.dataset.modalTarget);
-    openModal(modal);
+      if (modal) {
+        modal.classList.add("active");
+        overlay.classList.add("active");
+      }
+    });
   });
-});
 
-overlay.addEventListener("click", () => {
-  const modals = document.querySelectorAll(".modal.active");
-  modals.forEach((modal) => {
-    closeModal(modal);
+  // Close modal when clicking close button
+  document.querySelectorAll("[data-close-button]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const modals = document.querySelectorAll(".modal.active");
+      const overlay = document.getElementById("overlay");
+
+      modals.forEach((modal) => {
+        modal.classList.remove("active");
+      });
+
+      overlay.classList.remove("active");
+    });
   });
-});
 
-closeModalButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const modal = button.closest(".modal");
-    closeModal(modal);
-  });
-});
+  // FIX: Close modal when clicking on overlay
+  const overlay = document.getElementById("overlay");
+  if (overlay) {
+    overlay.addEventListener("click", function () {
+      const modals = document.querySelectorAll(".modal.active");
 
-function openModal(modal) {
-  if (modal == null) return;
-  modal.classList.add("active");
-  overlay.classList.add("active");
-}
+      modals.forEach((modal) => {
+        modal.classList.remove("active");
+      });
 
-function closeModal(modal) {
-  if (modal == null) return;
-  modal.classList.remove("active");
-  overlay.classList.remove("active");
-}
-
-// Optional: Close with Escape key
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    const modals = document.querySelectorAll(".modal.active");
-    modals.forEach((modal) => {
-      closeModal(modal);
+      this.classList.remove("active");
     });
   }
+
+  // Close modal with Escape key
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      const modals = document.querySelectorAll(".modal.active");
+      const overlay = document.getElementById("overlay");
+
+      if (modals.length > 0) {
+        modals.forEach((modal) => {
+          modal.classList.remove("active");
+        });
+
+        if (overlay) overlay.classList.remove("active");
+      }
+    }
+  });
+
+  // Position points on panoramas
+  document.querySelectorAll(".punt").forEach((punt) => {
+    const x = punt.getAttribute("data-x");
+    const y = punt.getAttribute("data-y");
+
+    if (x && y) {
+      const parent = punt.parentElement;
+      if (parent) {
+        const parentWidth = parent.offsetWidth;
+        const parentHeight = parent.offsetHeight;
+
+        const posX = (parseFloat(x) / 100) * parentWidth;
+        const posY = (parseFloat(y) / 100) * parentHeight;
+
+        punt.style.left = posX + "px";
+        punt.style.top = posY + "px";
+      }
+    }
+  });
 });

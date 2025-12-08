@@ -6,29 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panorama</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <!-- <link rel="stylesheet" href="assets/css/pop-up.css"> -->
 
+    <!-- Load scripts in correct order -->
     <script src="assets/js/side-bar.js" defer></script>
     <script src="assets/js/pop-up.js" defer></script>
     <script src="assets/js/omschrijving.js" defer></script>
     <script src="assets/js/recoords.js" defer></script>
+    <script src="assets/js/script.js" defer></script>
 </head>
+
 <?php
 include 'assets/includes/select.php';
 ?>
 
-<body>
-    <main id="panoramaFotos">
-        <?php foreach ($info as $panorama): ?>
-            <div class="panorama">
-                <!-- <h2><?php echo $panorama['titel']; ?></h2> -->
+<body class="no-vertical-scroll">
+    <?php include 'assets/includes/header.php'; ?>
 
-                <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
-                <!-- <h2><?php echo $panorama['pagina']; ?></h2> -->
-            </div>
-        <?php endforeach; ?>
+    <!-- Sidebar toggle -->
+    <button class="toggle-btn open-btn" id="openMenu">
+        <span class="menu-icon">☰</span>
+    </button>
 
-        <div class="content">
+    <!-- Sidebar - starts open -->
+    <div class="menu active">
+        <button class="toggle-btn close-btn" id="closeMenu">
+            <span class="menu-icon">✕</span>
+        </button>
+        <div id="info"></div>
+    </div>
+
+    <!-- Main panorama container -->
+    <main class="panorama-container" id="panoramaFotos">
+        <div class="panorama-strip">
             <?php foreach ($info as $panorama): ?>
                 <div class="panorama" data-panorama-id="<?php echo $panorama['id']; ?>">
                     <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
@@ -37,120 +46,77 @@ include 'assets/includes/select.php';
                         <?php if ($punt['panorama_id'] == $panorama['id']): ?>
                             <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt"
                                 data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
-                                data-panorama-id="<?php echo $punt['panorama_id']; ?>" title="<?php echo $punt['titel']; ?> ">
+                                data-panorama-id="<?php echo $punt['panorama_id']; ?>"
+                                title="<?php echo htmlspecialchars($punt['titel']); ?>">
+                                <span class="punt-dot"></span>
                             </button>
                         <?php endif; ?>
                     <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
-
-
-
-        </div> <?php foreach ($punten as $punt): ?>
-            <div class="modal" id="modal-<?php echo $punt['id']; ?>">
-                <div class="modal-header">
-                    <div class="titel"><?php echo $punt['titel']; ?></div>
-                    <button data-close-button class="close-button">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="punt-beschrijving">
-                        <?php echo $punt['omschrijving']; ?>
-                    </div>
-
-                    <?php
-                    $gevonden_bronnen = [];
-                    foreach ($bronnen as $bron) {
-                        if ($bron['punt_id'] == $punt['id']) {
-                            $gevonden_bronnen[] = $bron;
-                        }
-                    }
-                    ?>
-
-                    <?php if (!empty($gevonden_bronnen)): ?>
-                        <div class="bronnen-sectie">
-                            <h3>Bronnen:</h3>
-                            <div class="bronnen-lijst">
-                                <?php foreach ($gevonden_bronnen as $bron): ?>
-                                    <div class="bron-item">
-                                        <h4><?php echo $bron['titel']; ?></h4>
-
-                                        <?php if (!empty($bron['auteur'])): ?>
-                                            <p><strong>Auteur:</strong> <?php echo $bron['auteur']; ?></p>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($bron['referentie_tekst'])): ?>
-                                            <p><?php echo $bron['referentie_tekst']; ?></p>
-                                        <?php endif; ?>
-
-                                        <?php if (!empty($bron['afbeelding'])): ?>
-                                            <img src="<?php echo $bron['afbeelding']; ?>" alt="<?php echo $bron['titel']; ?>"
-                                                style="max-width: 100%; height: auto; margin-top: 10px;">
-                                        <?php endif; ?>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-                </div>
-            </div>
-        <?php endforeach; ?>
         </div>
         <div id="overlay" class="overlay"></div>
+
     </main>
 
+    <!-- Minimap -->
+    <div id="panoramaMinimap" class="panorama-minimap">
+        <div id="panoramaMinimapViewport" class="panorama-minimap-viewport"></div>
+    </div>
+
+    <!-- Modals for points -->
+    <?php foreach ($punten as $punt): ?>
+        <div class="modal" id="modal-<?php echo $punt['id']; ?>">
+            <div class="modal-header">
+                <div class="title"><?php echo htmlspecialchars($punt['titel']); ?></div>
+                <button data-close-button class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="punt-beschrijving">
+                    <?php echo $punt['omschrijving']; ?>
+                </div>
+
+                <?php
+                $gevonden_bronnen = [];
+                foreach ($bronnen as $bron) {
+                    if ($bron['punt_id'] == $punt['id']) {
+                        $gevonden_bronnen[] = $bron;
+                    }
+                }
+                ?>
+
+                <?php if (!empty($gevonden_bronnen)): ?>
+                    <div class="bronnen-sectie">
+                        <h3>Bronnen:</h3>
+                        <div class="bronnen-lijst">
+                            <?php foreach ($gevonden_bronnen as $bron): ?>
+                                <div class="bron-item">
+                                    <h4><?php echo htmlspecialchars($bron['titel']); ?></h4>
+
+                                    <?php if (!empty($bron['auteur'])): ?>
+                                        <p><strong>Auteur:</strong> <?php echo htmlspecialchars($bron['auteur']); ?></p>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($bron['referentie_tekst'])): ?>
+                                        <p><?php echo htmlspecialchars($bron['referentie_tekst']); ?></p>
+                                    <?php endif; ?>
+
+                                    <?php if (!empty($bron['afbeelding'])): ?>
+                                        <img src="<?php echo htmlspecialchars($bron['afbeelding']); ?>"
+                                            alt="<?php echo htmlspecialchars($bron['titel']); ?>"
+                                            style="max-width: 100%; height: auto; margin-top: 10px;">
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endforeach; ?>
+
+    
+    <?php include 'assets/includes/footer.php'; ?>
 </body>
-<!-- <script>
-    document.addEventListener('click', function (event) {
-        // Find clicked panorama image
-        const clickedElement = event.target;
-        const panorama = clickedElement.closest('.panorama');
-
-        if (panorama) {
-            const img = panorama.querySelector('img');
-            const imgRect = img.getBoundingClientRect();
-
-            // Calculate position relative to IMAGE, not container
-            const xRelativeToImage = event.clientX - imgRect.left;
-            const yRelativeToImage = event.clientY - imgRect.top;
-
-            console.log('CLICK ON IMAGE:');
-            console.log('  Image:', img.src);
-            console.log('  Image position:', imgRect.left, imgRect.top);
-            console.log('  Image size:', img.offsetWidth, 'x', img.offsetHeight);
-            console.log('  Click on image at:', xRelativeToImage.toFixed(0), 'X', yRelativeToImage.toFixed(0));
-
-            // Show visual feedback
-            const marker = document.createElement('div');
-            marker.style.position = 'absolute';
-            marker.style.left = (xRelativeToImage - 10) + 'px';
-            marker.style.top = (yRelativeToImage - 10) + 'px';
-            marker.style.width = '20px';
-            marker.style.height = '20px';
-            marker.style.backgroundColor = 'red';
-            marker.style.border = '2px solid yellow';
-            marker.style.borderRadius = '50%';
-            marker.style.zIndex = '9999';
-            panorama.appendChild(marker);
-
-            setTimeout(() => marker.remove(), 3000);
-        }
-    });
-</script> -->
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Document</title>
-
-<link rel="stylesheet" href="assets/css/style.css">
-
-</head>
-<?php
-include 'assets/includes/header.php';
-
-include 'assets/includes/footer.php';
-?>
-
-<!-- #region -->
-</body>
-
 
 </html>

@@ -4,11 +4,7 @@
   box-sizing: border-box;
 }
 
-main {
-  position: relative;
-}
-
-/* MODAL STYLES */
+/* MODAL STYLES - Higher z-index than sidebar */
 .modal {
   position: fixed;
   top: 50%;
@@ -17,7 +13,7 @@ main {
   transition: 200ms ease-in-out;
   border: 1px solid black;
   border-radius: 10px;
-  z-index: 10001;
+  z-index: 10002; /* Higher than sidebar overlay */
   background-color: white;
   width: 500px;
   max-width: 80%;
@@ -51,6 +47,20 @@ main {
   background: none;
   font-size: 1.25rem;
   font-weight: bold;
+  color: #333;
+  transition: color 0.2s;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-header .close-button:hover {
+  color: red;
+  background-color: #f0f0f0;
+  border-radius: 50%;
 }
 
 .modal-body {
@@ -60,7 +70,7 @@ main {
   max-height: calc(80vh - 60px);
 }
 
-/* OVERLAY - SINGLE DEFINITION */
+/* MODAL OVERLAY - Higher than sidebar but lower than modal */
 #overlay {
   position: fixed;
   opacity: 0;
@@ -71,11 +81,12 @@ main {
   background-color: rgba(0, 0, 0, 0.5);
   pointer-events: none;
   transition: 200ms ease-in-out;
-  z-index: 10000;
+  z-index: 10001; /* Higher than sidebar but lower than modal */
+  cursor: pointer;
 }
 
 #overlay.active {
-  /* opacity: 0; ← FIXED! */
+  opacity: 1;
   pointer-events: all;
 }
 
@@ -115,21 +126,6 @@ main {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* REMOVE THESE CONFLICTING RULES - they cause problems */
-/*
-.modal.active ~ * {
-  pointer-events: none !important;
-}
-
-.modal.active {
-  pointer-events: auto !important;
-}
-
-.modal.active .modal-body * {
-  pointer-events: auto !important;
-}
-*/
-
 @media (min-width: 2000px) {
   .modal {
     width: 1800px;
@@ -137,42 +133,35 @@ main {
   }
 }
 
-/* Panorama horizontal layout */
-.panorama-container {
-  width: 100%;
-  padding: 10px 0;
-}
-
-.panorama-strip {
-  display: inline-flex;
-  gap: 0;
-}
-
-.panorama {
-  position: relative;
-  display: inline-block;
-  margin-right: 0;
-  vertical-align: top;
-}
-
-.panorama-img {
-  display: block;
-  height: 500px;
-  width: auto;
-  max-width: none;
-}
-
+/* Punt styles */
 .punt {
   position: absolute;
-  background-color: #0000006b;
+  background-color: rgba(255, 0, 0, 0.7);
   border-radius: 50%;
   cursor: pointer;
   z-index: 100;
   width: 30px;
   height: 30px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .punt:hover {
-  transform: scale(1.2);
+  transform: translate(-50%, -50%) scale(1.2);
   z-index: 101;
+  background-color: rgba(255, 0, 0, 0.9);
+}
+
+/* Point dot */
+.punt-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
 }
