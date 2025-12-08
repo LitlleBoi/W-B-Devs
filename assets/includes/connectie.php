@@ -3,7 +3,7 @@
 $servername = "localhost";
 $username = "root";
 $password = ""; // Default for XAMPP
-$dbname = "w&b_devs-1";
+$dbname = "w_b_devs_new";
 
 
 

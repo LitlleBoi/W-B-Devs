@@ -81,8 +81,8 @@ function updatePointPositions() {
 
       // Make it visible
       point.style.backgroundColor = "red";
-      point.style.width = "20px";
-      point.style.height = "20px";
+      point.style.width = "30px";
+      point.style.height = "30px";
       point.style.borderRadius = "50%";
       point.style.border = "2px solid white";
       point.style.zIndex = "1000";
