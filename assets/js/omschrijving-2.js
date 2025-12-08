@@ -9,7 +9,7 @@ let lastUpdateTime = 0;
 
 // Function to initialize everything
 function initializePanoramaInfo() {
-  console.log("🚀 Initializing panorama info...");
+  console.log(" Initializing panorama info...");
 
   const info = document.getElementById("info");
   if (!info) {

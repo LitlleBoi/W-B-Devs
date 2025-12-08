@@ -1,43 +1,25 @@
 <?php
-header('Content-Type: application/json');
+// omschrijving-data.php
+include 'select.php';
 
-// Database connection parameters
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "w&b_devs-1";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-$stmt_panorama = $conn->prepare("SELECT * FROM panorama");
-$stmt_panorama->execute();
-$result_panorama = $stmt_panorama->get_result();
-
-$response = [
-    'format' => 'v2', // Mark as new format
+// Format data for JavaScript
+$output = [
+    'format' => 'v2',
     'panoramas' => []
 ];
 
-if ($result_panorama && $result_panorama->num_rows > 0) {
-    while ($row = $result_panorama->fetch_assoc()) {
-        $response['panoramas'][] = [
-            'titel' => $row['titel'],
-            'beschrijving' => $row['beschrijving'],
-            'catalogusnummer' => $row['catalogusnummer'] ?? 'CT-' . str_pad($row['id'], 3, '0', STR_PAD_LEFT),
-            'auteursrechtlicentie' => $row['auteursrechtlicentie'] ?? 'Onbekend',
-            'vervaardiger' => $row['vervaardiger'] ?? 'Onbekend',
-            'jaar' => $row['jaar'] ?? date('Y')
-        ];
-    }
+foreach ($info as $panorama) {
+    $output['panoramas'][] = [
+        'titel' => $panorama['titel'],
+        'beschrijving' => $panorama['beschrijving'],
+        'catalogusnummer' => $panorama['catalogusnummer'] ?? '',
+        'auteursrechtlicentie' => $panorama['auteursrechtlicentie'] ?? '',
+        'vervaardiger' => $panorama['vervaardiger'] ?? '',
+        'jaar' => date('Y', strtotime($panorama['aangemaakt_op'])),
+        'locatie' => 'Nederland'
+    ];
 }
 
-$stmt_panorama->close();
-$conn->close();
-
-echo json_encode($response);
+header('Content-Type: application/json');
+echo json_encode($output);
 ?>

@@ -6,7 +6,7 @@ let isInitialized = false;
 
 // Function to initialize everything
 function initializePanoramaInfo() {
-  console.log("Initializing panorama info...");
+  // console.log("Initializing panorama info...");
 
   const info = document.getElementById("info");
   if (!info) {
@@ -29,13 +29,13 @@ function initializePanoramaInfo() {
       return response.json();
     })
     .then((jsonData) => {
-      console.log("Raw data received:", jsonData);
+      // console.log("Raw data received:", jsonData);
 
       // Check data format
       if (jsonData.format === "v2" && jsonData.panoramas) {
         // New format with wrapper object
         panoramaData = jsonData.panoramas;
-        console.log("Using v2 format data:", panoramaData);
+        // console.log("Using v2 format data:", panoramaData);
       } else if (Array.isArray(jsonData)) {
         // Check if it's flat array [title1, desc1, title2, desc2...]
         if (jsonData.length > 0 && typeof jsonData[0] === "string") {
@@ -66,12 +66,12 @@ function initializePanoramaInfo() {
       }
 
       totalPanoramas = panoramaData.length;
-      console.log(`Loaded ${totalPanoramas} panoramas`);
+      // console.log(`Loaded ${totalPanoramas} panoramas`);
 
       // Debug: show first few items
       if (panoramaData.length > 0) {
-        console.log("First panorama item:", panoramaData[0]);
-        console.log("Sample catalog number:", panoramaData[0].catalogusnummer);
+        // console.log("First panorama item:", panoramaData[0]);
+        // console.log("Sample catalog number:", panoramaData[0].catalogusnummer);
       }
 
       // Try to detect actual panorama width
@@ -102,7 +102,7 @@ function detectPanoramaWidth() {
   const panoramaImg = document.querySelector(".panorama img");
   if (panoramaImg && panoramaImg.width > 0) {
     panoramaWidth = panoramaImg.width;
-    console.log(`Panorama width detected: ${panoramaWidth}px`);
+    // console.log(`Panorama width detected: ${panoramaWidth}px`);
   }
 }
 
@@ -212,7 +212,7 @@ function updateSidebarInfo() {
 
 // Setup scroll listener (simplified since no list to scroll)
 function setupScrollListener() {
-  console.log("Setting up scroll listener...");
+  // console.log("Setting up scroll listener...");
 
   let ticking = false;
 

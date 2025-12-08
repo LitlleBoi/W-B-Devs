@@ -34,11 +34,13 @@ function closeModal(modal) {
   modal.classList.remove("active");
   overlay.classList.remove("active");
 }
-// In pop-up.js
 
-// Voorkom dat sidebar opent wanneer je op inspect klikt
-document.querySelectorAll(".modal, .modal *").forEach((element) => {
-  element.addEventListener("click", function (e) {
-    e.stopPropagation(); // Zorg dat click niet doorgegeven wordt
-  });
+// Optional: Close with Escape key
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    const modals = document.querySelectorAll(".modal.active");
+    modals.forEach((modal) => {
+      closeModal(modal);
+    });
+  }
 });

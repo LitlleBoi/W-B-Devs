@@ -3,10 +3,12 @@
 *::before {
   box-sizing: border-box;
 }
+
 main {
   position: relative;
 }
 
+/* MODAL STYLES */
 .modal {
   position: fixed;
   top: 50%;
@@ -15,13 +17,11 @@ main {
   transition: 200ms ease-in-out;
   border: 1px solid black;
   border-radius: 10px;
-  z-index: 10;
+  z-index: 10001;
   background-color: white;
   width: 500px;
   max-width: 80%;
-
-  /* 🆕 MAXIMALE HOOGTE + SCROLL */
-  max-height: 80vh; /* 80% van schermhoogte */
+  max-height: 80vh;
   display: flex;
   flex-direction: column;
 }
@@ -36,9 +36,7 @@ main {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
-
-  /* 🆕 HEADER BLOIJFT BOVEN */
-  flex-shrink: 0; /* Zorgt dat header niet krimpt */
+  flex-shrink: 0;
 }
 
 .modal-header .title {
@@ -55,19 +53,33 @@ main {
   font-weight: bold;
 }
 
-/* 🆕 MODAL BODY MET SCROLL */
 .modal-body {
   padding: 10px 15px;
-
-  /* 🎪 MAGIE: Scrollbaar wanneer content te lang is */
   overflow-y: auto;
-  flex-grow: 1; /* Neemt alle resterende ruimte in */
-
-  /* Optioneel: maximum hoogte voor body alleen */
-  max-height: calc(80vh - 60px); /* Totale hoogte minus header */
+  flex-grow: 1;
+  max-height: calc(80vh - 60px);
 }
 
-/* 🆕 BRONNEN SECTIE STYLING */
+/* OVERLAY - SINGLE DEFINITION */
+#overlay {
+  position: fixed;
+  opacity: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  transition: 200ms ease-in-out;
+  z-index: 10000;
+}
+
+#overlay.active {
+  /* opacity: 0; ← FIXED! */
+  pointer-events: all;
+}
+
+/* BRONNEN SECTIE STYLING */
 .bronnen-sectie {
   margin-top: 20px;
   padding-top: 15px;
@@ -103,33 +115,20 @@ main {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-#overlay {
-  position: fixed;
-  opacity: 0;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  pointer-events: none;
-  transition: 200ms ease-in-out;
-  z-index: 5;
+/* REMOVE THESE CONFLICTING RULES - they cause problems */
+/*
+.modal.active ~ * {
+  pointer-events: none !important;
 }
 
-#overlay.active {
-
-  opacity: 0;
-  pointer-events: all;
+.modal.active {
+  pointer-events: auto !important;
 }
-.punt {
-  position: absolute;
-  /* transform: translate(-50%, -50%); */
 
-
-  cursor: pointer;
-  transition: all 0.3s ease;
-  background-color: transparent;
+.modal.active .modal-body * {
+  pointer-events: auto !important;
 }
+*/
 
 @media (min-width: 2000px) {
   .modal {
@@ -141,9 +140,6 @@ main {
 /* Panorama horizontal layout */
 .panorama-container {
   width: 100%;
-  /* overflow-x: auto; */
-  /* overflow-y: hidden; */
-  /* white-space: nowrap; */
   padding: 10px 0;
 }
 
@@ -168,15 +164,15 @@ main {
 
 .punt {
   position: absolute;
-  background-color: red;
-  border: 2px solid yellow;
+  background-color: #0000006b;
   border-radius: 50%;
   cursor: pointer;
   z-index: 100;
+  width: 30px;
+  height: 30px;
 }
 
 .punt:hover {
   transform: scale(1.2);
   z-index: 101;
 }
-
