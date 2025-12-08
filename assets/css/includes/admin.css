@@ -1,48 +1,51 @@
 .adminlink a:hover {
-    transition: 0.3s; 
-    background-color: rgb(219, 120, 84);
-    border-radius: 10%;
-    padding-top: 3px;
-    padding-bottom: 3px;
-    padding-left:  0px;
-    padding-right:  0px;
+  transition: 0.3s;
+
+  border-radius: 10%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 
 a:-webkit-any-link {
-    color: black;
+  color: black;
 }
 
 .tabel {
-    display: flex;
-    justify-content: center;
-    margin: 0 auto;
-    margin-bottom: 50px;
-    width: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  width: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ceffd8e6;
+  border-radius: 20px;
 }
 
 .tabel table {
-    background-color: #ceffd8e6;
-    width: 50%;
-    min-width: 600px;
-    border-collapse: collapse;
+  background-color: #e7ffebe6;
+  width: 50%;
+  min-width: 600px;
+  border-collapse: collapse;
 }
 
-.tabel th, .tabel td {
-    padding: 12px;
-    text-align: left;
+.tabel th,
+.tabel td {
+  padding: 12px;
+  text-align: left;
 }
 
 .tabel th {
-
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .tabel img {
-    max-width: 80px;
-    height: auto;
+  max-width: 80px;
+  height: auto;
 }
 
 .admin-titel {
-    text-align: center;
+  text-align: center;
 }
