@@ -46,7 +46,7 @@ include 'assets/includes/select.php';
                         <?php if ($punt['panorama_id'] == $panorama['id']): ?>
                             <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt"
                                 data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
-                                data-panorama-id="<?php echo $punt['panorama_id']; ?>"
+                                data-panorama-id="<?php echo $punt['panorama_id']; ?>" data-punt-id="<?php echo $punt['id']; ?>"
                                 title="<?php echo htmlspecialchars($punt['titel']); ?>">
                                 <span class="punt-dot"></span>
                             </button>
@@ -114,8 +114,20 @@ include 'assets/includes/select.php';
             </div>
         </div>
     <?php endforeach; ?>
+    <!-- DEBUG: Check data -->
+    <div style="display: none;">
+        <?php
+        echo "Number of panoramas: " . count($info) . "<br>";
+        echo "Number of points: " . count($punten) . "<br>";
 
-    
+        foreach ($punten as $i => $punt) {
+            echo "Point {$i}: ID={$punt['id']}, ";
+            echo "X={$punt['x']}, Y={$punt['y']}, ";
+            echo "Panorama={$punt['panorama_id']}<br>";
+        }
+        ?>
+    </div>
+
     <?php include 'assets/includes/footer.php'; ?>
 </body>
 

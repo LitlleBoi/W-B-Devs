@@ -105,3 +105,11 @@ body.no-scroll {
 .toggle-btn.hidden {
   display: none !important;
 }
+
+.punt {
+  position: absolute !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1000 !important;
+  opacity: 1 !important;
+  pointer-events: all !important;
+}
