@@ -18,81 +18,82 @@ include 'assets/includes/select.php';
 ?>
 
 <body>
-    <main>
-        <div id="layout" class="grid menu-hidden-desktop">
-            <button id="openMenu" class="toggle-btn open-btn">☰</button>
+    <main id="panoramaFotos">
+        <?php foreach ($info as $panorama): ?>
+            <div class="panorama">
+                <!-- <h2><?php echo $panorama['titel']; ?></h2> -->
 
-            <aside id="menu" class="menu">
-                <button id="closeMenu" class="toggle-btn close-btn">×</button>
-                <div id="info"></div>
-            </aside>
+                <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
+                <!-- <h2><?php echo $panorama['pagina']; ?></h2> -->
+            </div>
+        <?php endforeach; ?>
 
-            <div class="content">
-                <?php foreach ($info as $panorama): ?>
-                    <div class="panorama" data-panorama-id="<?php echo $panorama['id']; ?>">
-                        <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
+        <div class="content">
+            <?php foreach ($info as $panorama): ?>
+                <div class="panorama" data-panorama-id="<?php echo $panorama['id']; ?>">
+                    <img src="<?php echo $panorama['afbeelding']; ?>" alt="<?php echo $panorama['titel']; ?>">
 
-                        <?php foreach ($punten as $punt): ?>
-                            <?php if ($punt['panorama_id'] == $panorama['id']): ?>
-                                <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt"
-                                    data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
-                                    data-panorama-id="<?php echo $punt['panorama_id']; ?>" title="<?php echo $punt['titel']; ?> ">
-                                </button>
-                            <?php endif; ?>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endforeach; ?>
-
-
-
-            </div> <?php foreach ($punten as $punt): ?>
-                <div class="modal" id="modal-<?php echo $punt['id']; ?>">
-                    <div class="modal-header">
-                        <div class="titel"><?php echo $punt['titel']; ?></div>
-                        <button data-close-button class="close-button">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="punt-beschrijving">
-                            <?php echo $punt['omschrijving']; ?>
-                        </div>
-
-                        <?php
-                        $gevonden_bronnen = [];
-                        foreach ($bronnen as $bron) {
-                            if ($bron['punt_id'] == $punt['id']) {
-                                $gevonden_bronnen[] = $bron;
-                            }
-                        }
-                        ?>
-
-                        <?php if (!empty($gevonden_bronnen)): ?>
-                            <div class="bronnen-sectie">
-                                <h3>Bronnen:</h3>
-                                <div class="bronnen-lijst">
-                                    <?php foreach ($gevonden_bronnen as $bron): ?>
-                                        <div class="bron-item">
-                                            <h4><?php echo $bron['titel']; ?></h4>
-
-                                            <?php if (!empty($bron['auteur'])): ?>
-                                                <p><strong>Auteur:</strong> <?php echo $bron['auteur']; ?></p>
-                                            <?php endif; ?>
-
-                                            <?php if (!empty($bron['referentie_tekst'])): ?>
-                                                <p><?php echo $bron['referentie_tekst']; ?></p>
-                                            <?php endif; ?>
-
-                                            <?php if (!empty($bron['afbeelding'])): ?>
-                                                <img src="<?php echo $bron['afbeelding']; ?>" alt="<?php echo $bron['titel']; ?>"
-                                                    style="max-width: 100%; height: auto; margin-top: 10px;">
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php endforeach; ?>
-                                </div>
-                            </div>
+                    <?php foreach ($punten as $punt): ?>
+                        <?php if ($punt['panorama_id'] == $panorama['id']): ?>
+                            <button data-modal-target="#modal-<?php echo $punt['id']; ?>" class="punt"
+                                data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
+                                data-panorama-id="<?php echo $punt['panorama_id']; ?>" title="<?php echo $punt['titel']; ?> ">
+                            </button>
                         <?php endif; ?>
-                    </div>
+                    <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
+
+
+
+        </div> <?php foreach ($punten as $punt): ?>
+            <div class="modal" id="modal-<?php echo $punt['id']; ?>">
+                <div class="modal-header">
+                    <div class="titel"><?php echo $punt['titel']; ?></div>
+                    <button data-close-button class="close-button">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="punt-beschrijving">
+                        <?php echo $punt['omschrijving']; ?>
+                    </div>
+
+                    <?php
+                    $gevonden_bronnen = [];
+                    foreach ($bronnen as $bron) {
+                        if ($bron['punt_id'] == $punt['id']) {
+                            $gevonden_bronnen[] = $bron;
+                        }
+                    }
+                    ?>
+
+                    <?php if (!empty($gevonden_bronnen)): ?>
+                        <div class="bronnen-sectie">
+                            <h3>Bronnen:</h3>
+                            <div class="bronnen-lijst">
+                                <?php foreach ($gevonden_bronnen as $bron): ?>
+                                    <div class="bron-item">
+                                        <h4><?php echo $bron['titel']; ?></h4>
+
+                                        <?php if (!empty($bron['auteur'])): ?>
+                                            <p><strong>Auteur:</strong> <?php echo $bron['auteur']; ?></p>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($bron['referentie_tekst'])): ?>
+                                            <p><?php echo $bron['referentie_tekst']; ?></p>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($bron['afbeelding'])): ?>
+                                            <img src="<?php echo $bron['afbeelding']; ?>" alt="<?php echo $bron['titel']; ?>"
+                                                style="max-width: 100%; height: auto; margin-top: 10px;">
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endforeach; ?>
         </div>
         <div id="overlay" class="overlay"></div>
     </main>

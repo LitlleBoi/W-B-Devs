@@ -13,7 +13,7 @@ if (session_status() == PHP_SESSION_NONE) {
         <div class="nav">
             <a href="start.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
-                <div>start</div>
+                <div>Start</div>
             </a>
             <a href="panorama.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
@@ -26,11 +26,11 @@ if (session_status() == PHP_SESSION_NONE) {
             </a>
             <a href="inlog.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
-                <div>inlog</div>
+                <div>Inlog</div>
             </a>
             <a href="admin.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
-                <div>admin</div>
+                <div>Admin</div>
             </a>
             <?php if (isset($_SESSION['login']) && $_SESSION['login'] === 'true'): ?>
                 <a href="assets/includes/logout.php">

@@ -21,10 +21,7 @@ $stmt1->bind_param("i", $id);
 $stmt1->execute();
 $result1 = $stmt1->get_result();
 $row = $result1->fetch_assoc();
-if (!$row) {
-    echo "Niet gevonden";
-    exit;
-}
+if (!$row) { echo "Niet gevonden"; exit; }
 
 // Haal punt op
 $stmt3 = $conn->prepare("SELECT * FROM punten WHERE panorama_id = ?");
@@ -93,73 +90,59 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body>
     <?php include "assets/includes/header.php"; ?>
 
-    <div class="tabel">
-        <form method="post" class="mb-3">
-            <?php if (!empty($bronnen)): ?>
-                <br></br>
-                <h2>Bewerk Punt</h2>
-                <div class="mb-3">
-                    <label for="panorama_id" class="form-label">pagina:</label>
-                    <input type="text" class="form-control" id="panorama_id" name="panorama_id"
-                        value="<?php echo htmlspecialchars($row['panorama_id']); ?>" required>
-                </div>
+<div class="tabel">
+<form method="post" class="mb-3">
+    <?php if (!empty($bronnen)): ?>
+        <br></br>
+        <h2>Bewerk Punt</h2>
+    <div class="mb-3">
+        <label for="panorama_id" class="form-label">pagina:</label>
+        <input type="text" class="form-control" id="panorama_id" name="panorama_id" value="<?php echo htmlspecialchars($row['panorama_id']); ?>" required>
+    </div>
 
-                <div class="mb-3">
-                    <label for="x_coordinaat" class="form-label">x_coordinaat:</label>
-                    <input type="text" class="form-control" id="x_coordinaat" name="x_coordinaat"
-                        value="<?php echo htmlspecialchars($row['x_coordinaat']); ?>" required>
-                </div>
+    <div class="mb-3">
+        <label for="x_coordinaat" class="form-label">x_coordinaat:</label>
+        <input type="text" class="form-control" id="x_coordinaat" name="x_coordinaat" value="<?php echo htmlspecialchars($row['x_coordinaat']); ?>" required>
+    </div>
 
-                <div class="mb-3">
-                    <label for="y_coordinaat" class="form-label">y_coordinaat:</label>
-                    <input type="text" class="form-control" id="y_coordinaat" name="y_coordinaat"
-                        value="<?php echo htmlspecialchars($row['y_coordinaat']); ?>" required>
-                </div>
+    <div class="mb-3">
+        <label for="y_coordinaat" class="form-label">y_coordinaat:</label>
+        <input type="text" class="form-control" id="y_coordinaat" name="y_coordinaat" value="<?php echo htmlspecialchars($row['y_coordinaat']); ?>" required>
+    </div>
 
-                <div class="mb-3">
-                    <label for="hoogte" class="form-label">hoogte:</label>
-                    <input type="text" class="form-control" id="hoogte" name="hoogte"
-                        value="<?php echo htmlspecialchars($row['hoogte']); ?>" required>
-                </div>
+    <div class="mb-3">
+        <label for="hoogte" class="form-label">hoogte:</label>
+        <input type="text" class="form-control" id="hoogte" name="hoogte" value="<?php echo htmlspecialchars($row['hoogte']); ?>" required>
+    </div>
 
-                <div class="mb-3">
-                    <label for="breedte" class="form-label">breedte:</label>
-                    <input type="text" class="form-control" id="breedte" name="breedte"
-                        value="<?php echo htmlspecialchars($row['breedte']); ?>" required>
-                </div>
+    <div class="mb-3">
+        <label for="breedte" class="form-label">breedte:</label>
+        <input type="text" class="form-control" id="breedte" name="breedte" value="<?php echo htmlspecialchars($row['breedte']); ?>" required>
+    </div>
 
-                <?php foreach ($bronnen as $bron): ?>
-                    <?php if (is_array($bron) && isset($bron['id'])): ?>
+    <?php foreach ($bronnen as $bron): ?>
+    <?php if (is_array($bron) && isset($bron['id'])): ?>
 
-                        <h2>bronnen</h2>
-                        <div class="mb-3">
-                            <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]"
-                                class="form-label"><br>Id: <?php echo htmlspecialchars($bron['id'] ?? ''); ?>:</br> Titel voor
-                                bron:</label>
-                            <input type="text" class="form-control"
-                                id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]"
-                                name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]"
-                                value="<?php echo htmlspecialchars($bron['titel'] ?? ''); ?>">
-                        </div>
+        <h2>bronnen</h2>
+    <div class="mb-3">
+        <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" class="form-label"><br>Id: <?php echo htmlspecialchars($bron['id'] ?? ''); ?>:</br> Titel voor bron:</label>
+        <input type="text" class="form-control" id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][titel]" value="<?php echo htmlspecialchars($bron['titel'] ?? ''); ?>">
+    </div>
 
-                        <div class="mb-3">
-                            <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]"
-                                class="form-label">Referentie tekst voor bron:</label>
-                            <input type="text" class="form-control"
-                                id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]"
-                                name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]"
-                                value="<?php echo htmlspecialchars($bron['referentie_tekst'] ?? ''); ?>">
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+    <div class="mb-3">
+        <label for="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" class="form-label">Referentie tekst voor bron:</label>
+        <input type="text" class="form-control" id="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" name="bronnen[<?php echo htmlspecialchars($bron['id'] ?? ''); ?>][referentie_tekst]" value="<?php echo htmlspecialchars($bron['referentie_tekst'] ?? ''); ?>">
+    </div>
+    <?php endif; ?>
+    <?php endforeach; ?>
+    <?php endif; ?>
 
-            <button type="submit" class="btn btn-primary">Opslaan</button>
-            <a href="admin.php" class="btn btn-secondary">Terug</a>
-        </form>
+    <button type="submit" class="btn btn-primary">Opslaan</button>
+    <a href="admin.php" class="btn btn-secondary">Terug</a>
+</form>
 
-        <?php include "assets/includes/footer.php"; ?>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<?php include "assets/includes/footer.php"; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     </div>
 
 

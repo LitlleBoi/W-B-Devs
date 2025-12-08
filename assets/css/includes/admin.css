@@ -1,11 +1,11 @@
 .adminlink a:hover {
-  transition: 0.3s;
+    transition: 0.3s; 
 
-  border-radius: 10%;
-  padding-top: 3px;
-  padding-bottom: 3px;
-  padding-left: 0px;
-  padding-right: 0px;
+    border-radius: 10%;
+    padding-top: 3px;
+    padding-bottom: 3px;
+    padding-left:  0px;
+    padding-right:  0px;
 }
 
 a:-webkit-any-link {
@@ -13,22 +13,22 @@ a:-webkit-any-link {
 }
 
 .tabel {
-  display: flex;
-  justify-content: center;
-  margin: 0 auto;
-  margin-top: 50px;
-  margin-bottom: 50px;
-  width: 50%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #ceffd8e6;
-  border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    width: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ceffd8e6;
+    border-radius: 20px;
 }
 
 .tabel table {
-  background-color: #e7ffebe6;
-  width: 50%;
-  min-width: 600px;
-  border-collapse: collapse;
+    background-color: #e7ffebe6;
+    width: 50%;
+    min-width: 600px;
+    border-collapse: collapse;
 }
 
 .tabel th,
