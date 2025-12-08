@@ -38,27 +38,7 @@
 }
 
 /* Hotspots */
-.punt {
-  position: absolute;
-  background: red;
-  border: 2px solid white;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  cursor: pointer;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-weight: bold;
-  font-size: 12px;
-}
 
-.punt:hover {
-  transform: scale(1.2);
-  z-index: 101;
-}
 
 /* Optional: Add a thin line between images if you want separation */
 /* .panorama:not(:last-child) img {

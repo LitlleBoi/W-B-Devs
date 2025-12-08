@@ -1,5 +1,5 @@
 function updatePointPositions() {
-  console.log("=== Positioning points ===");
+  // console.log("=== Positioning points ===");
 
   const panoramas = document.querySelectorAll(".panorama");
 
@@ -12,22 +12,22 @@ function updatePointPositions() {
     const imgWidth = img.offsetWidth;
     const imgHeight = img.offsetHeight;
 
-    console.log(`Panorama ${panoramaId}: ${imgWidth}x${imgHeight}`);
+    // console.log(`Panorama ${panoramaId}: ${imgWidth}x${imgHeight}`);
 
     const points = panorama.querySelectorAll(".punt");
 
     if (points.length === 0) {
-      console.log(`No points for panorama ${panoramaId}`);
+      // console.log(`No points for panorama ${panoramaId}`);
       return;
     }
 
-    console.log(`${points.length} points for panorama ${panoramaId}`);
+    // console.log(`${points.length} points for panorama ${panoramaId}`);
 
     points.forEach((point, index) => {
       const dbX = parseFloat(point.getAttribute("data-x"));
       const dbY = parseFloat(point.getAttribute("data-y"));
 
-      console.log(`Point ${index}: ${dbX}, ${dbY}`);
+      // console.log(`Point ${index}: ${dbX}, ${dbY}`);
 
       if (!isNaN(dbX) && !isNaN(dbY)) {
         // SIMPLE: If coordinates are big (like 50000), scale down
@@ -49,12 +49,12 @@ function updatePointPositions() {
         x = Math.max(0, Math.min(x, imgWidth));
         y = Math.max(0, Math.min(y, imgHeight));
 
-        console.log(`Position: ${x}px, ${y}px`);
+        // console.log(`Position: ${x}px, ${y}px`);
 
         point.style.left = x + "px";
         point.style.top = y + "px";
-        point.style.backgroundColor = "red";
-        point.style.border = "2px solid yellow";
+        // point.style.backgroundColor = "red";
+        // point.style.border = "2px solid yellow";
       }
     });
   });

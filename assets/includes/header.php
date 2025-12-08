@@ -6,12 +6,12 @@ if (session_status() == PHP_SESSION_NONE) {
 <header>
     <div class="container">
         <div class="search">
-            <a href="index.php">
+            <a href="start.php">
                 <img src="assets/img/search.png" alt="W&amp;B Devs search">
             </a>
         </div>
         <div class="nav">
-            <a href="index.php">
+            <a href="start.php">
                 <img src="assets/img/arrow.png" alt="W&amp;B Devs search">
                 <div>start</div>
             </a>
