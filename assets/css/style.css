@@ -113,3 +113,7 @@ body.no-scroll {
   opacity: 1 !important;
   pointer-events: all !important;
 }
+
+.tabel {
+  padding: 20px;
+}
