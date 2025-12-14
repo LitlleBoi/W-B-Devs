@@ -1,0 +1,19 @@
+header .container {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.mb-3.bron {
+  border-top: 2px solid #343a40;
+}
+.tevoegen {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  border: 2px dashed #6c757d;
+  border-radius: 5px;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  color: #6c757d;
+}
