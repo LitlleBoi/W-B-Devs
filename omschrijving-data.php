@@ -24,12 +24,5 @@ foreach ($info as $panorama) {
 }
 
 header('Content-Type: application/json');
-
-// Clean any buffered output before sending JSON
-ob_clean();
-
-// Suppress any potential warnings/notices in output
-error_reporting(0);
-
 echo json_encode($output);
 ?>

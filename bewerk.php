@@ -68,11 +68,11 @@ if ($result_punten && $result_punten->num_rows > 0) {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Update panorama basisgegevens
     $titel = $_POST['titel'] ?? '';
-    $omschrijving = $_POST['beschrijving'] ?? '';
+    $beschrijving = $_POST['beschrijving'] ?? '';
     $catalogusnummer = $_POST['catalogusnummer'] ?? '';
 
     $stmt_update_panorama = $conn->prepare("UPDATE panorama SET titel = ?, beschrijving = ?, catalogusnummer = ? WHERE id = ?");
-    $stmt_update_panorama->bind_param("sssi", $titel, $omschrijving, $catalogusnummer, $id);
+    $stmt_update_panorama->bind_param("sssi", $titel, $beschrijving, $catalogusnummer, $id);
     $stmt_update_panorama->execute();
 
     // Update punten als deze bestaan
@@ -130,9 +130,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     value="<?php echo htmlspecialchars($panorama_row['catalogusnummer'] ?? ''); ?>">
             </div>
             <div class="mb-3">
-                <label for="omschrijving" class="form-label">Omschrijving:</label>
-                <input type="text" class="form-control" id="omschrijving" name="omschrijving"
-                    value="<?php echo htmlspecialchars($panorama_row['omschrijving'] ?? ''); ?>">
+                <label for="beschrijving" class="form-label">Beschrijving:</label>
+                <input type="text" class="form-control" id="beschrijving" name="beschrijving"
+                    value="<?php echo htmlspecialchars($panorama_row['beschrijving'] ?? ''); ?>">
             </div>
 
 

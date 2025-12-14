@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 // Database connection parameters
 $servername = "localhost";
 $username = "root";
@@ -15,7 +18,7 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
+$conn->set_charset("utf8mb4");
 
 // echo "Connected successfully to the database.<br>";
 
@@ -43,7 +46,7 @@ if ($result_panorama && $result_panorama->num_rows > 0) {
         ];
     }
 } else {
-    echo "0 results voor panorama";
+    // No panoramas found
 }
 
 
@@ -71,7 +74,7 @@ if ($result_punten && $result_punten->num_rows > 0) {
         ];
     }
 } else {
-    echo "0 results voor punten";
+    // No punten found
 }
 
 //  Haal bronnen op
@@ -95,7 +98,7 @@ if ($result_bronnen && $result_bronnen->num_rows > 0) {
         ];
     }
 } else {
-    echo "0 results voor bronnen";
+    // No bronnen found
 }
 
 //  SLUIT ALLE STATEMENTS EN CONNECTIE
