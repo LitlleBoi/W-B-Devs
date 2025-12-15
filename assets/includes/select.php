@@ -51,7 +51,7 @@ if ($result_panorama && $result_panorama->num_rows > 0) {
 
 
 //  Haal punten op  
-$stmt_punten = $conn->prepare("SELECT * FROM punten");
+$stmt_punten = $conn->prepare("SELECT * FROM punten WHERE status = 'gepubliceerd' AND deleted_at IS NULL");
 $stmt_punten->execute();
 $result_punten = $stmt_punten->get_result();
 
@@ -78,7 +78,7 @@ if ($result_punten && $result_punten->num_rows > 0) {
 }
 
 //  Haal bronnen op
-$stmt_bronnen = $conn->prepare("SELECT * FROM bronnen");
+$stmt_bronnen = $conn->prepare("SELECT * FROM bronnen WHERE status = 'gepubliceerd'");
 $stmt_bronnen->execute();
 $result_bronnen = $stmt_bronnen->get_result();
 
@@ -94,6 +94,7 @@ if ($result_bronnen && $result_bronnen->num_rows > 0) {
             'catalogusnummer' => $row['catalogusnummer'],
             'publicatie_jaar' => $row['publicatie_jaar'],
             'afbeelding' => $row['bron-afbeelding'],
+            'status' => $row['status'],
             'referentie_tekst' => $row['referentie_tekst']
         ];
     }
