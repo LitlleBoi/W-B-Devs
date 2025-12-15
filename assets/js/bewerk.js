@@ -4,24 +4,31 @@ document.addEventListener("DOMContentLoaded", function () {
   const points = document.querySelectorAll(".punt");
 
   // Update image when URL changes
-  imageUrlInput.addEventListener("change", function () {
-    panoramaImage.src = this.value;
-    // Trigger point repositioning after image loads
-    panoramaImage.onload = function () {
-      setTimeout(updatePointPositions, 100);
-    };
-  });
+  if (imageUrlInput && panoramaImage) {
+    imageUrlInput.addEventListener("change", function () {
+      panoramaImage.src = this.value;
+      // Trigger point repositioning after image loads
+      panoramaImage.onload = function () {
+        setTimeout(updatePointPositions, 100);
+      };
+    });
+  }
 
   // Make points draggable and update form inputs
-  points.forEach((point) => {
-    point.addEventListener("mousedown", startDrag);
+  if (points.length > 0) {
+    points.forEach((point) => {
+      // Remove any existing event listeners
+      point.removeEventListener("mousedown", startDrag);
 
-    // Prevent default button behavior
-    point.addEventListener("click", function (e) {
-      e.preventDefault();
-      e.stopPropagation();
+      point.addEventListener("mousedown", startDrag);
+
+      // Prevent default button behavior
+      point.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      });
     });
-  });
+  }
 
   function startDrag(e) {
     e.preventDefault();
@@ -34,52 +41,75 @@ document.addEventListener("DOMContentLoaded", function () {
     const panorama = point.closest(".panorama");
     const img = panorama.querySelector("img");
 
-    const startX = e.clientX;
-    const startY = e.clientY;
+    // Get current position from data attributes (absolute pixel values)
+    const currentX = parseFloat(point.getAttribute("data-x"));
+    const currentY = parseFloat(point.getAttribute("data-y"));
 
-    // Get initial point position in percentages
-    const style = window.getComputedStyle(point);
-    const initialLeft = parseFloat(style.left);
-    const initialTop = parseFloat(style.top);
+    // Get image natural dimensions
+    const naturalWidth = img.naturalWidth;
+    const naturalHeight = img.naturalHeight;
+
+    // Get displayed image dimensions
+    const displayedWidth = img.offsetWidth;
+    const displayedHeight = img.offsetHeight;
+
+    // Calculate scale factors
+    const scaleX = displayedWidth / naturalWidth;
+    const scaleY = displayedHeight / naturalHeight;
+
+    // Convert absolute coordinates to displayed coordinates
+    const displayedX = currentX * scaleX;
+    const displayedY = currentY * scaleY;
+
+    // Get mouse starting position
+    const startMouseX = e.clientX;
+    const startMouseY = e.clientY;
+
+    // Get current displayed position (what user sees)
+    const currentDisplayedX = displayedX;
+    const currentDisplayedY = displayedY;
 
     function doDrag(e) {
-      const dx = e.clientX - startX;
-      const dy = e.clientY - startY;
+      // Calculate mouse movement
+      const deltaX = e.clientX - startMouseX;
+      const deltaY = e.clientY - startMouseY;
 
-      // Calculate new position in pixels
-      const panoramaRect = panorama.getBoundingClientRect();
-      const newLeftPx = (initialLeft / 100) * panoramaRect.width + dx;
-      const newTopPx = (initialTop / 100) * panoramaRect.height + dy;
+      // Calculate new displayed position
+      let newDisplayedX = currentDisplayedX + deltaX;
+      let newDisplayedY = currentDisplayedY + deltaY;
 
-      // Convert to percentages
-      const newLeftPercent = (newLeftPx / panoramaRect.width) * 100;
-      const newTopPercent = (newTopPx / panoramaRect.height) * 100;
+      // Constrain to image bounds
+      newDisplayedX = Math.max(0, Math.min(newDisplayedX, displayedWidth));
+      newDisplayedY = Math.max(0, Math.min(newDisplayedY, displayedHeight));
 
-      // Constrain to image bounds (0-100%)
-      const constrainedLeft = Math.max(0, Math.min(newLeftPercent, 100));
-      const constrainedTop = Math.max(0, Math.min(newTopPercent, 100));
+      // Convert displayed position back to natural coordinates
+      const newNaturalX = newDisplayedX / scaleX;
+      const newNaturalY = newDisplayedY / scaleY;
 
-      // Update point position
-      point.style.left = constrainedLeft + "%";
-      point.style.top = constrainedTop + "%";
+      // Update data attributes with natural coordinates
+      point.setAttribute("data-x", Math.round(newNaturalX));
+      point.setAttribute("data-y", Math.round(newNaturalY));
 
-      // Update data attributes
-      if (img.complete && img.naturalWidth > 0) {
-        const xAbsolute = (constrainedLeft / 100) * img.naturalWidth;
-        const yAbsolute = (constrainedTop / 100) * img.naturalHeight;
+      // Update form inputs
+      if (xInput) xInput.value = Math.round(newNaturalX);
+      if (yInput) yInput.value = Math.round(newNaturalY);
 
-        point.setAttribute("data-x", xAbsolute);
-        point.setAttribute("data-y", yAbsolute);
+      // Recalculate point position using the existing recoords.js function
+      // We'll manually update the point position for immediate feedback
+      const xPercent = (newNaturalX / naturalWidth) * 100;
+      const yPercent = (newNaturalY / naturalHeight) * 100;
 
-        // Update form inputs
-        if (xInput) xInput.value = Math.round(xAbsolute);
-        if (yInput) yInput.value = Math.round(yAbsolute);
-      }
+      point.style.left = xPercent + "%";
+      point.style.top = yPercent + "%";
+      point.style.transform = "translate(-50%, -50%)";
     }
 
     function stopDrag() {
       document.removeEventListener("mousemove", doDrag);
       document.removeEventListener("mouseup", stopDrag);
+
+      // After dragging, run updatePointPositions to ensure everything is consistent
+      setTimeout(updatePointPositions, 10);
     }
 
     document.addEventListener("mousemove", doDrag);
@@ -88,30 +118,38 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Update data attributes when form inputs change
   document.querySelectorAll(".coord-x-input").forEach((input) => {
-    input.addEventListener("change", function () {
-      const pointId = this.name.match(/punten\[(\d+)\]\[x\]/)[1];
-      const point = document.querySelector(`[data-punt-id="${pointId}"]`);
-      const img = point.closest(".panorama").querySelector("img");
-
-      if (img.complete && img.naturalWidth > 0) {
-        const x = parseFloat(this.value);
-        point.setAttribute("data-x", x);
-        updatePointPositions(); // Recalculate position
-      }
-    });
+    input.removeEventListener("change", updateCoordFromInput);
+    input.addEventListener("change", updateCoordFromInput);
   });
 
   document.querySelectorAll(".coord-y-input").forEach((input) => {
-    input.addEventListener("change", function () {
-      const pointId = this.name.match(/punten\[(\d+)\]\[y\]/)[1];
-      const point = document.querySelector(`[data-punt-id="${pointId}"]`);
-      const img = point.closest(".panorama").querySelector("img");
-
-      if (img.complete && img.naturalWidth > 0) {
-        const y = parseFloat(this.value);
-        point.setAttribute("data-y", y);
-        updatePointPositions(); // Recalculate position
-      }
-    });
+    input.removeEventListener("change", updateCoordFromInput);
+    input.addEventListener("change", updateCoordFromInput);
   });
+
+  function updateCoordFromInput(e) {
+    const input = e.target;
+    const match = input.name.match(/punten\[(\d+)\]\[(x|y)\]/);
+
+    if (match) {
+      const pointId = match[1];
+      const coordType = match[2];
+      const point = document.querySelector(`[data-punt-id="${pointId}"]`);
+
+      if (point) {
+        // Update data attribute
+        point.setAttribute(`data-${coordType}`, input.value);
+
+        // Re-run point positioning
+        setTimeout(updatePointPositions, 10);
+      }
+    }
+  }
+
+  // Also update when image loads
+  if (panoramaImage) {
+    panoramaImage.addEventListener("load", function () {
+      setTimeout(updatePointPositions, 100);
+    });
+  }
 });
