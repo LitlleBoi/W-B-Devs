@@ -75,7 +75,7 @@ if (isset($_GET['change_status']) && isset($_GET['item_id']) && isset($_GET['typ
             $stmt->execute();
             $stmt->close();
             $_SESSION['success'] = "Status succesvol gewijzigd naar " . $status . ".";
-            
+
             // DIRECT DE DATA OPNIEUW OPHALEN NA UPDATE
             // Dit zorgt dat de pagina de laatste status toont
             header("Location: bewerk.php?panorama_id=" . $panorama_id);
@@ -365,6 +365,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <!DOCTYPE html>
 <html lang="nl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -373,21 +374,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="assets/css/bewerk.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body class="edit-page">
     <?php include 'assets/includes/header.php'; ?>
 
     <div class="edit-form-container">
         <!-- Messages -->
         <?php if (isset($success_msg)): ?>
-                <div class="alert alert-success">
-                    <?php echo htmlspecialchars($success_msg); ?>
-                </div>
+            <div class="alert alert-success">
+                <?php echo htmlspecialchars($success_msg); ?>
+            </div>
         <?php endif; ?>
 
         <?php if (isset($error_msg)): ?>
-                <div class="alert alert-error">
-                    <?php echo htmlspecialchars($error_msg); ?>
-                </div>
+            <div class="alert alert-error">
+                <?php echo htmlspecialchars($error_msg); ?>
+            </div>
         <?php endif; ?>
 
         <div class="form-header">
@@ -534,8 +536,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <span class="file-name">Geen bestand gekozen</span>
                         </div>
                         <input type="text" class="form-control" style="margin-top: 10px;"
-                            placeholder="of voer een URL in"
-                            name="new_bronnen[POINT_ID][TEMP_ID][bron-afbeelding]">
+                            placeholder="of voer een URL in" name="new_bronnen[POINT_ID][TEMP_ID][bron-afbeelding]">
                         <div class="bron-image-preview new-bron-preview" style="margin-top: 10px;">
                             <p class="text-muted" style="font-size: 12px;">
                                 Geen afbeelding geselecteerd
@@ -597,14 +598,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Publicatiejaar:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][publicatie_jaar]" placeholder="2023">
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][publicatie_jaar]"
+                                    placeholder="2023">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Catalogusnummer:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][catalogusnummer]" placeholder="12345">
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][catalogusnummer]"
+                                    placeholder="12345">
                             </div>
                         </div>
                     </div>
@@ -673,8 +676,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
 
                 <div class="mb-3">
-                    <label for="afbeelding_url" class="form-label">Afbeelding URL:</label>
-                    <input type="text" class="form-control" id="afbeelding_url" name="afbeelding_url"
+                    <label for="afbeelding_url" class="form-label"></label>
+                    <input type="hidden" class="form-control" id="afbeelding_url" name="afbeelding_url"
                         value="<?php echo isset($panorama_row['afbeelding_url']) ? htmlspecialchars($panorama_row['afbeelding_url']) : ''; ?>"
                         required>
                 </div>
@@ -690,21 +693,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <div class="panorama" data-panorama-id="<?php echo $panorama_id; ?>"
                             style="display: inline-block; position: relative;">
                             <?php if (isset($panorama_row['afbeelding_url'])): ?>
-                                    <img src="<?php echo htmlspecialchars($panorama_row['afbeelding_url']); ?>"
-                                        alt="<?php echo isset($panorama_row['titel']) ? htmlspecialchars($panorama_row['titel']) : ''; ?>">
+                                <img src="<?php echo htmlspecialchars($panorama_row['afbeelding_url']); ?>"
+                                    alt="<?php echo isset($panorama_row['titel']) ? htmlspecialchars($panorama_row['titel']) : ''; ?>">
 
-                                    <?php if (!empty($punten)): ?>
-                                            <?php foreach ($punten as $punt): ?>
-                                                    <?php if ($punt['status'] === 'gepubliceerd'): ?>
-                                                            <button class="punt" data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
-                                                                data-panorama-id="<?php echo $punt['panorama_id']; ?>"
-                                                                data-punt-id="<?php echo $punt['id']; ?>"
-                                                                title="<?php echo htmlspecialchars($punt['titel']); ?>" type="button">
-                                                                <span class="punt-dot"></span>
-                                                            </button>
-                                                    <?php endif; ?>
-                                            <?php endforeach; ?>
-                                    <?php endif; ?>
+                                <?php if (!empty($punten)): ?>
+                                    <?php foreach ($punten as $punt): ?>
+                                        <?php if ($punt['status'] === 'gepubliceerd'): ?>
+                                            <button class="punt" data-x="<?php echo $punt['x']; ?>" data-y="<?php echo $punt['y']; ?>"
+                                                data-panorama-id="<?php echo $punt['panorama_id']; ?>"
+                                                data-punt-id="<?php echo $punt['id']; ?>"
+                                                title="<?php echo htmlspecialchars($punt['titel']); ?>" type="button">
+                                                <span class="punt-dot"></span>
+                                            </button>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             <?php endif; ?>
                         </div>
                     </div>
@@ -721,267 +724,269 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
 
                 <?php if (!empty($punten)): ?>
-                        <?php foreach ($punten as $punt): ?>
-                                <?php
-                                // Zorg dat status altijd een geldige waarde heeft
-                                $punt_status = $punt['status'];
-                                if (!in_array($punt_status, ['concept', 'gepubliceerd', 'gearchiveerd'])) {
-                                    $punt_status = 'concept';
-                                }
-                                ?>
-                                <div class="point-edit-card" data-punt-id="<?php echo $punt['id']; ?>">
-                                    <div class="action-header">
-                                        <h4>Punt <?php echo $punt['id']; ?>: <?php echo htmlspecialchars($punt['titel']); ?></h4>
-                                        <div class="point-actions">
-                                            <span class="status-badge status-<?php echo $punt_status; ?>">
-                                                <?php echo $punt_status; ?>
-                                            </span>
-                                            <select class="status-select" name="punten[<?php echo $punt['id']; ?>][status]">
-                                                <option value="concept" <?php echo $punt_status === 'concept' ? 'selected' : ''; ?>>Concept</option>
-                                                <option value="gepubliceerd" <?php echo $punt_status === 'gepubliceerd' ? 'selected' : ''; ?>>Gepubliceerd</option>
-                                                <option value="gearchiveerd" <?php echo $punt_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
-                                            </select>
-                                    
-                                            <!-- DELETE button - GECORRIGEERD -->
-                                            <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $punt['id']; ?>&type=punt"
-                                                class="delete-btn"
-                                                onclick="return confirm('Weet je zeker dat je dit punt wilt verwijderen?')">
-                                                × Verwijder
-                                            </a>
-                                    
-                                            <!-- PUBLISH button - GECORRIGEERD -->
-                                            <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gepubliceerd"
-                                                class="btn btn-small btn-success">
-                                                Publiceer
-                                            </a>
-                                    
-                                            <!-- ARCHIVE button -->
-                                            <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gearchiveerd"
-                                                class="btn btn-small btn-secondary">
-                                                Archiveer
-                                            </a>
-                                    
-                                            <!-- CONCEPT button -->
-                                            <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=concept"
-                                                class="btn btn-small btn-warning">
-                                                Concept
-                                            </a>
-                                        </div>
-                                    </div>
+                    <?php foreach ($punten as $punt): ?>
+                        <?php
+                        // Zorg dat status altijd een geldige waarde heeft
+                        $punt_status = $punt['status'];
+                        if (!in_array($punt_status, ['concept', 'gepubliceerd', 'gearchiveerd'])) {
+                            $punt_status = 'concept';
+                        }
+                        ?>
+                        <div class="point-edit-card" data-punt-id="<?php echo $punt['id']; ?>">
+                            <div class="action-header">
+                                <h4>Punt <?php echo $punt['id']; ?>: <?php echo htmlspecialchars($punt['titel']); ?></h4>
+                                <div class="point-actions">
+                                    <span class="status-badge status-<?php echo $punt_status; ?>">
+                                        <?php echo $punt_status; ?>
+                                    </span>
+                                    <select class="status-select" name="punten[<?php echo $punt['id']; ?>][status]">
+                                        <option value="concept" <?php echo $punt_status === 'concept' ? 'selected' : ''; ?>>
+                                            Concept</option>
+                                        <option value="gepubliceerd" <?php echo $punt_status === 'gepubliceerd' ? 'selected' : ''; ?>>Gepubliceerd</option>
+                                        <option value="gearchiveerd" <?php echo $punt_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
+                                    </select>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="mb-3">
-                                                <label for="punt_titel_<?php echo $punt['id']; ?>" class="form-label">Titel:</label>
-                                                <input type="text" class="form-control" id="punt_titel_<?php echo $punt['id']; ?>"
-                                                    name="punten[<?php echo $punt['id']; ?>][titel]"
-                                                    value="<?php echo htmlspecialchars($punt['titel']); ?>">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <!-- DELETE button - GECORRIGEERD -->
+                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $punt['id']; ?>&type=punt"
+                                        class="delete-btn"
+                                        onclick="return confirm('Weet je zeker dat je dit punt wilt verwijderen?')">
+                                        × Verwijder
+                                    </a>
 
-                                    <div class="mb-3">
-                                        <label for="punt_omschrijving_<?php echo $punt['id']; ?>"
-                                            class="form-label">Omschrijving:</label>
-                                        <textarea class="form-control" id="punt_omschrijving_<?php echo $punt['id']; ?>"
-                                            name="punten[<?php echo $punt['id']; ?>][omschrijving]"
-                                            rows="3"><?php echo htmlspecialchars($punt['omschrijving']); ?></textarea>
-                                    </div>
+                                    <!-- PUBLISH button - GECORRIGEERD -->
+                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gepubliceerd"
+                                        class="btn btn-small btn-success">
+                                        Publiceer
+                                    </a>
 
-                                    <div class="coord-inputs">
-                                        <div class="input-group">
-                                            <label for="punt_x_<?php echo $punt['id']; ?>" class="form-label">X-coördinaat:</label>
-                                            <input type="number" class="form-control coord-x-input"
-                                                id="punt_x_<?php echo $punt['id']; ?>" name="punten[<?php echo $punt['id']; ?>][x]"
-                                                value="<?php echo $punt['x']; ?>">
-                                        </div>
-                                        <div class="input-group">
-                                            <label for="punt_y_<?php echo $punt['id']; ?>" class="form-label">Y-coördinaat:</label>
-                                            <input type="number" class="form-control coord-y-input"
-                                                id="punt_y_<?php echo $punt['id']; ?>" name="punten[<?php echo $punt['id']; ?>][y]"
-                                                value="<?php echo $punt['y']; ?>">
-                                        </div>
-                                    </div>
+                                    <!-- ARCHIVE button -->
+                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gearchiveerd"
+                                        class="btn btn-small btn-secondary">
+                                        Archiveer
+                                    </a>
 
-                                    <!-- Existing Sources -->
-                                    <?php if (!empty($punt['bronnen'])): ?>
-                                            <div class="mt-4">
-                                                <div class="action-header">
-                                                    <h5>Bronnen</h5>
-                                                    <button type="button" class="btn btn-success add-bron-to-existing"
-                                                        data-point-id="<?php echo $punt['id']; ?>">
-                                                        + Nieuwe Bron Toevoegen
-                                                    </button>
-                                                </div>
-                                                <?php foreach ($punt['bronnen'] as $bron): ?>
-                                                        <?php
-                                                        // Zorg dat bron status altijd een geldige waarde heeft
-                                                        $bron_status = $bron['status'];
-                                                        if (!in_array($bron_status, ['concept', 'gepubliceerd', 'gearchiveerd'])) {
-                                                            $bron_status = 'concept';
-                                                        }
-                                                        ?>
-                                                        <div class="source-edit-card">
-                                                            <div class="action-header">
-                                                                <h6>Bron <?php echo $bron['id']; ?></h6>
-                                                                <div class="point-actions">
-                                                                    <span class="status-badge status-<?php echo $bron_status; ?>">
-                                                                        <?php echo $bron_status; ?>
-                                                                    </span>
-                                                                    <select class="status-select" name="bronnen[<?php echo $bron['id']; ?>][status]">
-                                                                        <option value="concept" <?php echo $bron_status === 'concept' ? 'selected' : ''; ?>>Concept</option>
-                                                                        <option value="gepubliceerd" <?php echo $bron_status === 'gepubliceerd' ? 'selected' : ''; ?>>Gepubliceerd</option>
-                                                                        <option value="gearchiveerd" <?php echo $bron_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
-                                                                    </select>
-                                                    
-                                                                    <!-- DELETE button voor bron - GECORRIGEERD -->
-                                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $bron['id']; ?>&type=bron"
-                                                                        class="delete-btn"
-                                                                        onclick="return confirm('Weet je zeker dat je deze bron wilt verwijderen?')">
-                                                                        × Verwijder
-                                                                    </a>
-                                                    
-                                                                    <!-- PUBLISH button voor bron - GECORRIGEERD -->
-                                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gepubliceerd"
-                                                                        class="btn btn-small btn-success">
-                                                                        Publiceer
-                                                                    </a>
-                                                    
-                                                                    <!-- ARCHIVE button voor bron -->
-                                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gearchiveerd"
-                                                                        class="btn btn-small btn-secondary">
-                                                                        Archiveer
-                                                                    </a>
-                                                    
-                                                                    <!-- CONCEPT button voor bron -->
-                                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=concept"
-                                                                        class="btn btn-small btn-warning">
-                                                                        Concept
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <div class="mb-3">
-                                                                        <label for="bron_titel_<?php echo $bron['id']; ?>"
-                                                                            class="form-label">Titel:</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="bron_titel_<?php echo $bron['id']; ?>"
-                                                                            name="bronnen[<?php echo $bron['id']; ?>][titel]"
-                                                                            value="<?php echo htmlspecialchars($bron['titel']); ?>">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <div class="mb-3">
-                                                                        <label for="bron_auteur_<?php echo $bron['id']; ?>"
-                                                                            class="form-label">Auteur:</label>
-                                                                        <input type="text" class="form-control"
-                                                                            id="bron_auteur_<?php echo $bron['id']; ?>"
-                                                                            name="bronnen[<?php echo $bron['id']; ?>][auteur]"
-                                                                            value="<?php echo htmlspecialchars($bron['auteur']); ?>">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="row">
-                                                                <div class="col-md-4">
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">Type:</label>
-                                                                        <select class="form-control"
-                                                                            name="bronnen[<?php echo $bron['id']; ?>][bron_type]">
-                                                                            <option value="boek" <?php echo $bron['bron_type'] === 'boek' ? 'selected' : ''; ?>>Boek</option>
-                                                                            <option value="artikel" <?php echo $bron['bron_type'] === 'artikel' ? 'selected' : ''; ?>>Artikel</option>
-                                                                            <option value="website" <?php echo $bron['bron_type'] === 'website' ? 'selected' : ''; ?>>Website</option>
-                                                                            <option value="video" <?php echo $bron['bron_type'] === 'video' ? 'selected' : ''; ?>>Video</option>
-                                                                            <option value="document" <?php echo $bron['bron_type'] === 'document' ? 'selected' : ''; ?>>Document</option>
-                                                                            <option value="ander" <?php echo $bron['bron_type'] === 'ander' ? 'selected' : ''; ?>>Ander</option>
-                                                                        </select>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">Publicatiejaar:</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="bronnen[<?php echo $bron['id']; ?>][publicatie_jaar]"
-                                                                            value="<?php echo htmlspecialchars($bron['publicatie_jaar']); ?>">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-4">
-                                                                    <div class="mb-3">
-                                                                        <label class="form-label">Catalogusnummer:</label>
-                                                                        <input type="text" class="form-control"
-                                                                            name="bronnen[<?php echo $bron['id']; ?>][catalogusnummer]"
-                                                                            value="<?php echo htmlspecialchars($bron['catalogusnummer']); ?>">
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label for="bron_referentie_<?php echo $bron['id']; ?>" class="form-label">Referentie tekst:</label>
-                                                                <textarea class="form-control" id="bron_referentie_<?php echo $bron['id']; ?>"
-                                                                    name="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]"
-                                                                    rows="2"><?php echo htmlspecialchars($bron['referentie_tekst']); ?></textarea>
-                                                            </div>
-
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Bron Afbeelding:</label>
-
-                                                                <?php if (!empty($bron['bron-afbeelding'])): ?>
-                                                                        <div style="margin-bottom: 10px;">
-                                                                            <img src="<?php echo htmlspecialchars($bron['bron-afbeelding']); ?>"
-                                                                                alt="Huidige afbeelding"
-                                                                                style="max-width: 200px; display: block; margin-bottom: 10px;">
-                                                                            <small>Huidige afbeelding: <?php echo basename($bron['bron-afbeelding']); ?></small>
-                                                                        </div>
-                                                                <?php endif; ?>
-
-                                                                <div class="file-upload-container" style="margin-bottom: 10px;">
-                                                                    <input type="file" class="file-upload-input existing-bron-file"
-                                                                        name="bron_afbeelding_<?php echo $bron['id']; ?>"
-                                                                        data-bron-id="<?php echo $bron['id']; ?>" accept="image/*">
-                                                                    <button type="button" class="btn btn-secondary upload-btn">
-                                                                        <i class="fas fa-upload"></i> Upload nieuwe afbeelding
-                                                                    </button>
-                                                                    <span class="file-name">Geen bestand gekozen</span>
-                                                                </div>
-
-                                                                <input type="text" class="form-control" id="bron_afbeelding_<?php echo $bron['id']; ?>"
-                                                                    name="bronnen[<?php echo $bron['id']; ?>][bron-afbeelding]"
-                                                                    value="<?php echo htmlspecialchars($bron['bron-afbeelding']); ?>"
-                                                                    placeholder="Afbeelding URL">
-                                                                <small class="text-muted">Upload een bestand of voer een URL in</small>
-
-                                                                <div class="bron-image-preview existing-bron-preview"
-                                                                    id="existing_bron_preview_<?php echo $bron['id']; ?>" style="margin-top: 10px;">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                <?php endforeach; ?>
-                                                <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
-                                                    style="margin-top: 15px;">
-                                                    <!-- New sources for existing points will be added here -->
-                                                </div>
-                                            </div>
-                                    <?php else: ?>
-                                            <div class="mt-4">
-                                                <div class="action-header">
-                                                    <h5>Bronnen</h5>
-                                                    <button type="button" class="btn btn-success add-bron-to-existing"
-                                                        data-point-id="<?php echo $punt['id']; ?>">
-                                                        + Nieuwe Bron Toevoegen
-                                                    </button>
-                                                </div>
-                                                <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
-                                                    style="margin-top: 15px;">
-                                                    <!-- New sources for existing points will be added here -->
-                                                </div>
-                                            </div>
-                                    <?php endif; ?>
+                                    <!-- CONCEPT button -->
+                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=concept"
+                                        class="btn btn-small btn-warning">
+                                        Concept
+                                    </a>
                                 </div>
-                        <?php endforeach; ?>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="punt_titel_<?php echo $punt['id']; ?>" class="form-label">Titel:</label>
+                                        <input type="text" class="form-control" id="punt_titel_<?php echo $punt['id']; ?>"
+                                            name="punten[<?php echo $punt['id']; ?>][titel]"
+                                            value="<?php echo htmlspecialchars($punt['titel']); ?>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="punt_omschrijving_<?php echo $punt['id']; ?>"
+                                    class="form-label">Omschrijving:</label>
+                                <textarea class="form-control" id="punt_omschrijving_<?php echo $punt['id']; ?>"
+                                    name="punten[<?php echo $punt['id']; ?>][omschrijving]"
+                                    rows="3"><?php echo htmlspecialchars($punt['omschrijving']); ?></textarea>
+                            </div>
+
+                            <div class="coord-inputs">
+                                <div class="input-group">
+                                    <label for="punt_x_<?php echo $punt['id']; ?>" class="form-label">X-coördinaat:</label>
+                                    <input type="number" class="form-control coord-x-input"
+                                        id="punt_x_<?php echo $punt['id']; ?>" name="punten[<?php echo $punt['id']; ?>][x]"
+                                        value="<?php echo $punt['x']; ?>">
+                                </div>
+                                <div class="input-group">
+                                    <label for="punt_y_<?php echo $punt['id']; ?>" class="form-label">Y-coördinaat:</label>
+                                    <input type="number" class="form-control coord-y-input"
+                                        id="punt_y_<?php echo $punt['id']; ?>" name="punten[<?php echo $punt['id']; ?>][y]"
+                                        value="<?php echo $punt['y']; ?>">
+                                </div>
+                            </div>
+
+                            <!-- Existing Sources -->
+                            <?php if (!empty($punt['bronnen'])): ?>
+                                <div class="mt-4">
+                                    <div class="action-header">
+                                        <h5>Bronnen</h5>
+                                        <button type="button" class="btn btn-success add-bron-to-existing"
+                                            data-point-id="<?php echo $punt['id']; ?>">
+                                            + Nieuwe Bron Toevoegen
+                                        </button>
+                                    </div>
+                                    <?php foreach ($punt['bronnen'] as $bron): ?>
+                                        <?php
+                                        // Zorg dat bron status altijd een geldige waarde heeft
+                                        $bron_status = $bron['status'];
+                                        if (!in_array($bron_status, ['concept', 'gepubliceerd', 'gearchiveerd'])) {
+                                            $bron_status = 'concept';
+                                        }
+                                        ?>
+                                        <div class="source-edit-card">
+                                            <div class="action-header">
+                                                <h6>Bron <?php echo $bron['id']; ?></h6>
+                                                <div class="point-actions">
+                                                    <span class="status-badge status-<?php echo $bron_status; ?>">
+                                                        <?php echo $bron_status; ?>
+                                                    </span>
+                                                    <select class="status-select" name="bronnen[<?php echo $bron['id']; ?>][status]">
+                                                        <option value="concept" <?php echo $bron_status === 'concept' ? 'selected' : ''; ?>>Concept</option>
+                                                        <option value="gepubliceerd" <?php echo $bron_status === 'gepubliceerd' ? 'selected' : ''; ?>>Gepubliceerd</option>
+                                                        <option value="gearchiveerd" <?php echo $bron_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
+                                                    </select>
+
+                                                    <!-- DELETE button voor bron - GECORRIGEERD -->
+                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $bron['id']; ?>&type=bron"
+                                                        class="delete-btn"
+                                                        onclick="return confirm('Weet je zeker dat je deze bron wilt verwijderen?')">
+                                                        × Verwijder
+                                                    </a>
+
+                                                    <!-- PUBLISH button voor bron - GECORRIGEERD -->
+                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gepubliceerd"
+                                                        class="btn btn-small btn-success">
+                                                        Publiceer
+                                                    </a>
+
+                                                    <!-- ARCHIVE button voor bron -->
+                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gearchiveerd"
+                                                        class="btn btn-small btn-secondary">
+                                                        Archiveer
+                                                    </a>
+
+                                                    <!-- CONCEPT button voor bron -->
+                                                    <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=concept"
+                                                        class="btn btn-small btn-warning">
+                                                        Concept
+                                                    </a>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="bron_titel_<?php echo $bron['id']; ?>"
+                                                            class="form-label">Titel:</label>
+                                                        <input type="text" class="form-control"
+                                                            id="bron_titel_<?php echo $bron['id']; ?>"
+                                                            name="bronnen[<?php echo $bron['id']; ?>][titel]"
+                                                            value="<?php echo htmlspecialchars($bron['titel']); ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="mb-3">
+                                                        <label for="bron_auteur_<?php echo $bron['id']; ?>"
+                                                            class="form-label">Auteur:</label>
+                                                        <input type="text" class="form-control"
+                                                            id="bron_auteur_<?php echo $bron['id']; ?>"
+                                                            name="bronnen[<?php echo $bron['id']; ?>][auteur]"
+                                                            value="<?php echo htmlspecialchars($bron['auteur']); ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Type:</label>
+                                                        <select class="form-control"
+                                                            name="bronnen[<?php echo $bron['id']; ?>][bron_type]">
+                                                            <option value="boek" <?php echo $bron['bron_type'] === 'boek' ? 'selected' : ''; ?>>Boek</option>
+                                                            <option value="artikel" <?php echo $bron['bron_type'] === 'artikel' ? 'selected' : ''; ?>>Artikel</option>
+                                                            <option value="website" <?php echo $bron['bron_type'] === 'website' ? 'selected' : ''; ?>>Website</option>
+                                                            <option value="video" <?php echo $bron['bron_type'] === 'video' ? 'selected' : ''; ?>>Video</option>
+                                                            <option value="document" <?php echo $bron['bron_type'] === 'document' ? 'selected' : ''; ?>>Document</option>
+                                                            <option value="ander" <?php echo $bron['bron_type'] === 'ander' ? 'selected' : ''; ?>>Ander</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Publicatiejaar:</label>
+                                                        <input type="text" class="form-control"
+                                                            name="bronnen[<?php echo $bron['id']; ?>][publicatie_jaar]"
+                                                            value="<?php echo htmlspecialchars($bron['publicatie_jaar']); ?>">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Catalogusnummer:</label>
+                                                        <input type="text" class="form-control"
+                                                            name="bronnen[<?php echo $bron['id']; ?>][catalogusnummer]"
+                                                            value="<?php echo htmlspecialchars($bron['catalogusnummer']); ?>">
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label for="bron_referentie_<?php echo $bron['id']; ?>" class="form-label">Referentie
+                                                    tekst:</label>
+                                                <textarea class="form-control" id="bron_referentie_<?php echo $bron['id']; ?>"
+                                                    name="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]"
+                                                    rows="2"><?php echo htmlspecialchars($bron['referentie_tekst']); ?></textarea>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Bron Afbeelding:</label>
+
+                                                <?php if (!empty($bron['bron-afbeelding'])): ?>
+                                                    <div style="margin-bottom: 10px;">
+                                                        <img src="<?php echo htmlspecialchars($bron['bron-afbeelding']); ?>"
+                                                            alt="Huidige afbeelding"
+                                                            style="max-width: 200px; display: block; margin-bottom: 10px;">
+                                                        <small>Huidige afbeelding: <?php echo basename($bron['bron-afbeelding']); ?></small>
+                                                    </div>
+                                                <?php endif; ?>
+
+                                                <div class="file-upload-container" style="margin-bottom: 10px;">
+                                                    <input type="file" class="file-upload-input existing-bron-file"
+                                                        name="bron_afbeelding_<?php echo $bron['id']; ?>"
+                                                        data-bron-id="<?php echo $bron['id']; ?>" accept="image/*">
+                                                    <button type="button" class="btn btn-secondary upload-btn">
+                                                        <i class="fas fa-upload"></i> Upload nieuwe afbeelding
+                                                    </button>
+                                                    <span class="file-name">Geen bestand gekozen</span>
+                                                </div>
+
+                                                <input type="text" class="form-control" id="bron_afbeelding_<?php echo $bron['id']; ?>"
+                                                    name="bronnen[<?php echo $bron['id']; ?>][bron-afbeelding]"
+                                                    value="<?php echo htmlspecialchars($bron['bron-afbeelding']); ?>"
+                                                    placeholder="Afbeelding URL">
+                                                <small class="text-muted">Upload een bestand of voer een URL in</small>
+
+                                                <div class="bron-image-preview existing-bron-preview"
+                                                    id="existing_bron_preview_<?php echo $bron['id']; ?>" style="margin-top: 10px;">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                    <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
+                                        style="margin-top: 15px;">
+                                        <!-- New sources for existing points will be added here -->
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="mt-4">
+                                    <div class="action-header">
+                                        <h5>Bronnen</h5>
+                                        <button type="button" class="btn btn-success add-bron-to-existing"
+                                            data-point-id="<?php echo $punt['id']; ?>">
+                                            + Nieuwe Bron Toevoegen
+                                        </button>
+                                    </div>
+                                    <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
+                                        style="margin-top: 15px;">
+                                        <!-- New sources for existing points will be added here -->
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 <?php else: ?>
-                        <p>Geen punten gevonden voor dit panorama.</p>
+                    <p>Geen punten gevonden voor dit panorama.</p>
                 <?php endif; ?>
 
                 <!-- Container for new points -->
@@ -1003,4 +1008,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <script src="assets/js/recoords.js"></script>
     <script src="assets/js/bewerk.js"></script>
 </body>
+
 </html>
