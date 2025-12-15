@@ -44,6 +44,20 @@ if (isset($_GET['delete_item_id']) && isset($_GET['type'])) {
         }
         $stmt->close();
     } elseif ($type === 'bron') {
+        // Eerst de bestandspad ophalen om de foto te verwijderen
+        $stmt_select = $conn->prepare("SELECT `bron-afbeelding` FROM bronnen WHERE id = ?");
+        $stmt_select->bind_param("i", $delete_id);
+        $stmt_select->execute();
+        $stmt_select->bind_result($file_path);
+        $stmt_select->fetch();
+        $stmt_select->close();
+        
+        // Bestand verwijderen als het lokaal is opgeslagen
+        if (!empty($file_path) && strpos($file_path, 'assets/images/aanvullend/') !== false) {
+            deleteFile($file_path);
+        }
+        
+        // Bron markeren als verwijderd
         $stmt = $conn->prepare("UPDATE bronnen SET deleted_at = NOW() WHERE id = ?");
         $stmt->bind_param("i", $delete_id);
         if ($stmt->execute()) {
@@ -202,7 +216,14 @@ function uploadFile($fileData, $target_dir = "assets/images/aanvullend/")
 
     return null;
 }
-
+// File delete function
+function deleteFile($file_path) {
+    if (!empty($file_path) && file_exists($file_path) && strpos($file_path, 'assets/images/aanvullend/') !== false) {
+        unlink($file_path);
+        return true;
+    }
+    return false;
+}
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Update panorama basics
@@ -215,6 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($stmt_update_panorama) {
         $stmt_update_panorama->bind_param("ssssi", $titel, $beschrijving, $catalogusnummer, $afbeelding, $panorama_id);
         $stmt_update_panorama->execute();
+        $stmt_update_panorama->close(); // <-- Sluit de statement hier
     }
 
     // Update existing points - FIXED VERSION
@@ -255,6 +277,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             // Check for uploaded file
             $file_input_name = "bron_afbeelding_" . $bron_id;
             if (isset($_FILES[$file_input_name]) && $_FILES[$file_input_name]['error'] === UPLOAD_ERR_OK) {
+                // Eerst het huidige bestandspad ophalen om te verwijderen
+                $stmt_select = $conn->prepare("SELECT `bron-afbeelding` FROM bronnen WHERE id = ?");
+                $stmt_select->bind_param("i", $bron_id);
+                $stmt_select->execute();
+                $stmt_select->bind_result($old_file_path);
+                $stmt_select->fetch();
+                $stmt_select->close();
+                
+                // Oude bestand verwijderen als het lokaal is opgeslagen
+                if (!empty($old_file_path) && strpos($old_file_path, 'assets/images/aanvullend/') !== false) {
+                    deleteFile($old_file_path);
+                }
+                
+                // Nieuw bestand uploaden
                 $uploaded_file = uploadFile($_FILES[$file_input_name]);
                 if ($uploaded_file) {
                     $bron_afbeelding = $uploaded_file;
@@ -298,10 +334,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $status = $bron_data['status'] ?? 'concept';
 
                         // Handle file upload for this source
-                        if (
-                            isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
-                            $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
-                        ) {
+                        if (isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
+                            $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
                             $uploaded_file = uploadFile($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]);
                             if ($uploaded_file) {
                                 $bron_afbeelding = $uploaded_file;
@@ -316,7 +350,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         }
                     }
                 }
-                $stmt_insert_punt->close();
+                $stmt_insert_punt->close(); // <-- Sluit de insert_punt statement hier
             }
         }
     }
@@ -336,10 +370,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $status = $bron_data['status'] ?? 'concept';
 
                     // Handle file upload
-                    if (
-                        isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
-                        $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
-                    ) {
+                    if (isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
+                        $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
                         $uploaded_file = uploadFile($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]);
                         if ($uploaded_file) {
                             $bron_afbeelding = $uploaded_file;
