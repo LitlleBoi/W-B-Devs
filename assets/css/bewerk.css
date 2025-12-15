@@ -1,19 +1,73 @@
-header .container {
-  margin-left: 0;
-  padding-left: 0;
+/* bewerk.css additions */
+.panorama-container {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: #f0f0f0;
+  margin-bottom: 20px;
 }
 
-.mb-3.bron {
-  border-top: 2px solid #343a40;
+.panorama-strip {
+  display: inline-block;
 }
-.tevoegen {
-  font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  border: 2px dashed #6c757d;
-  border-radius: 5px;
-  padding: 10px;
-  margin-top: 10px;
-  cursor: pointer;
-  color: #6c757d;
+
+.panorama {
+  display: inline-block;
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+.panorama img {
+  display: block;
+  height: 500px;
+  width: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.punt {
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.7);
+  border-radius: 50%;
+  cursor: move;
+  z-index: 100;
+  width: 30px;
+  height: 30px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transform: translate(-50%, -50%);
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.punt:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  z-index: 101;
+  background-color: rgba(255, 0, 0, 0.9);
+}
+
+.punt-dot {
+  display: block;
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+}
+
+.point-edit-card {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+}
+
+.source-edit-card {
+  background: white;
+  border: 1px solid #e9ecef;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
 }
