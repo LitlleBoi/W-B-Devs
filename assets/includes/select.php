@@ -6,10 +6,10 @@ error_reporting(E_ALL);
 // Detect environment
 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' || preg_match('/^192\.168\.2/', $_SERVER['SERVER_ADDR'])) {
     // Offline/local omgeving
-    $servername = "localhost";  // of je offline host
-    $username = "root";         // offline user
-    $password = "";             // offline password
-    $dbname = "w_b_devs_new_offline"; // offline database naam
+    $servername = "localhost";
+    $username = "root";
+    $password = ""; // Default for XAMPP
+    $dbname = "w_b_devs_new";
 } else {
     // Online/production omgeving
     $servername = "localhost";
