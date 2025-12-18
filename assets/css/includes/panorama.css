@@ -1,0 +1,46 @@
+
+/* panorama.css - CLEAN TOUCHING IMAGES VERSION */
+
+/* Horizontal container */
+.panorama-container {
+  width: 100%;
+  /* overflow-x: auto; */
+  /* overflow-y: hidden; */
+  /* white-space: nowrap; */
+  padding: 10px 0;
+  background: #f0f0f0;
+}
+
+/* Strip of panoramas - images touch each other */
+.panorama-strip {
+  display: inline-block;
+  height: auto;
+}
+
+/* Individual panorama */
+.panorama {
+  display: inline-block;
+  position: relative;
+  margin: 0; /* NO MARGIN */
+  padding: 0; /* NO PADDING */
+  vertical-align: top;
+  background: white;
+}
+
+/* The IMAGE - touches next image */
+.panorama img {
+  display: block;
+  height: 500px; /* Fixed height for alignment */
+  width: auto; /* Natural width */
+  margin: 0; /* NO MARGIN */
+  padding: 0; /* NO PADDING */
+  border-right: 0; /* NO BORDER between images */
+}
+
+/* Hotspots */
+
+
+/* Optional: Add a thin line between images if you want separation */
+/* .panorama:not(:last-child) img {
+    border-right: 1px solid #ccc;
+

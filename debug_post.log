@@ -1,0 +1,88 @@
+2025-12-15 07:58:09 - POST data:
+Array
+(
+    [id] => 10
+    [titel] => CATHARIJNE - BARRIERE
+    [catalogusnummer] => 135010
+    [beschrijving] => Gezicht over de Catharijnebrug te Utrecht op een groot appartementengebouw, het douanekantoortje (de Catharijnebarrière), een herenhuis (later Bierhuis De Hoop) en de gasfabriek van W.H. de Heus.
+    [afbeelding_url] => assets/images/10.jpg
+    [punten] => Array
+        (
+            [12] => Array
+                (
+                    [status] => gearchiveerd
+                    [titel] => Catharijnebrug en gasfabriek
+                    [omschrijving] => Gezicht op de brug en gasfabriek van W.H. de Heus
+                    [x] => 1365
+                    [y] => 590
+                )
+
+        )
+
+    [bronnen] => Array
+        (
+            [6] => Array
+                (
+                    [status] => gepubliceerd
+                    [titel] => Catharijnebrug zuidwestelijk gezicht
+                    [auteur] => Het Utrechts Archief
+                    [bron_type] => boek
+                    [publicatie_jaar] => 0000
+                    [catalogusnummer] => 122380
+                    [referentie_tekst] => Gezicht op de stadsbuitengracht en de Catharijnebrug te Utrecht, uit het zuidwesten, met op de achtergrond een gebouw waarin meerdere woonhuizen zijn gecombineerd aan de latere Catharijnekade. Omstreeks 1859.
+                    [bron-afbeelding] => 
+                )
+
+            [7] => Array
+                (
+                    [status] => gepubliceerd
+                    [titel] => Catharijnebrug noordwestelijk gezicht
+                    [auteur] => Het Utrechts Archief
+                    [bron_type] => boek
+                    [publicatie_jaar] => 0000
+                    [catalogusnummer] => 122379
+                    [referentie_tekst] => Gezicht op de Stadsbuitengracht en de Catharijnebrug te Utrecht, uit het noordwesten, met links het commiezenhuisje, daarachter de schoorsteen van de gasfabriek van W.H. de Heus op het Vredenburg.
+                    [bron-afbeelding] => 
+                )
+
+            [8] => Array
+                (
+                    [status] => gepubliceerd
+                    [titel] => Gasfabriek nieuwjaarswens 1857
+                    [auteur] => Gaslantaarnopstekers
+                    [bron_type] => document
+                    [publicatie_jaar] => 0000
+                    [catalogusnummer] => 214852
+                    [referentie_tekst] => Nieuwejaars Heil- en Zegenwensch van de gaslantaarnopstekers bij de aanvang van het jaar 1857 voor de gasfabriek van W.H. de Heus.
+                    [bron-afbeelding] => 
+                )
+
+            [9] => Array
+                (
+                    [status] => gepubliceerd
+                    [titel] => Gasfabriek Vredenburg
+                    [auteur] => Het Utrechts Archief
+                    [bron_type] => boek
+                    [publicatie_jaar] => 0000
+                    [catalogusnummer] => 122384
+                    [referentie_tekst] => Gezicht vanaf de Catharijnebrug op de stadsbuitengracht te Utrecht, uit het noordwesten, met links de gasfabriek van W.H. de Heus aan het Vredenburg. De steenmassa is het noordwestelijke bastion van het vroegere kasteel Vredenburg.
+                    [bron-afbeelding] => assets/images/aanvullend/11-1.jpg
+                )
+
+            [24] => Array
+                (
+                    [status] => gepubliceerd
+                    [titel] => dfbvb
+                    [auteur] => fvsdvc
+                    [bron_type] => artikel
+                    [publicatie_jaar] => 2000
+                    [catalogusnummer] => 13123
+                    [referentie_tekst] => sfdsdefgegdsvdsdv
+                    [bron-afbeelding] => dvdsvsvcv
+                )
+
+        )
+
+)
+
+

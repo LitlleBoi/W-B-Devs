@@ -1,0 +1,28 @@
+.inlogbackground {
+    display: flex ;
+    justify-content: center;
+    align-items: center;
+}
+
+.inlogkaart {
+    background-color: gray;
+    background-position: center;
+    background-size: contain;
+    height: 480px;
+    padding: 50px;
+    /* margin: 50px; */
+    position: relative; 
+}
+
+.inlogtekst {
+    background-color: rgba(180, 170, 170, 0.6);
+    position: absolute;
+    top: 50%;
+    padding: 20px;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: right;
+    font-size: 20px;
+    color: black;
+}
+
