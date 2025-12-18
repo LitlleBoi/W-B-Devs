@@ -1028,7 +1028,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
 
             <div class="form-actions">
-                <a href="beheer.php" class="btn btn-secondary">Terug naar Overzicht</a>
+                <a href="admin.php" class="btn btn-secondary">Terug naar Overzicht</a>
                 <button type="submit" class="btn btn-primary">Alle Wijzigingen Opslaan</button>
             </div>
         </form>
