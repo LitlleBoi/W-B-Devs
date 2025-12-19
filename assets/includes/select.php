@@ -85,7 +85,7 @@ if ($result_punten && $result_punten->num_rows > 0) {
 }
 
 //  Haal bronnen op
-$stmt_bronnen = $conn->prepare("SELECT * FROM bronnen WHERE status = 'gepubliceerd'");
+$stmt_bronnen = $conn->prepare("SELECT * FROM bronnen WHERE status = 'gepubliceerd' AND deleted_at IS NULL");
 $stmt_bronnen->execute();
 $result_bronnen = $stmt_bronnen->get_result();
 

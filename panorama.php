@@ -95,6 +95,7 @@ include 'assets/includes/select.php';
 
                                     <?php if (!empty($bron['auteur'])): ?>
                                         <p><strong>Auteur:</strong> <?php echo htmlspecialchars($bron['auteur']); ?></p>
+                                        <p><strong>Catalogusnummer:</strong> <?php echo htmlspecialchars($bron['catalogusnummer']); ?></p>
                                     <?php endif; ?>
 
                                     <?php if (!empty($bron['referentie_tekst'])): ?>

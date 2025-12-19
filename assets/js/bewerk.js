@@ -221,7 +221,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Vervang placeholders in template met echte IDs
     const newBronHTML = template.innerHTML
-      .replace(/TEMP_ID/g, tempId)
+      .replace(/TEMP_POINT_ID/g, pointId)
+      .replace(/TEMP_BRON_ID/g, tempId)
       .replace(/POINT_ID/g, pointId);
 
     const bronDiv = document.createElement("div");
