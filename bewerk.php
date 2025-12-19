@@ -11,6 +11,11 @@
 // Start sessie voor gebruikersbeheer
 session_start();
 
+// Enable error reporting for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // Eenvoudige toegangscontrole - alleen ingelogde gebruikers mogen deze pagina bekijken
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
     header('Location: inlog.php');
@@ -251,6 +256,11 @@ function deleteFile($file_path)
 
 // Verwerk formulier inzending
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    // Debug: log POST data
+    error_log("=== POST DATA ===");
+    error_log("POST: " . print_r($_POST, true));
+    error_log("FILES: " . print_r($_FILES, true));
+    
     // Update panorama basisgegevens
     $titel = $_POST['titel'] ?? '';
     $beschrijving = $_POST['beschrijving'] ?? '';
@@ -261,13 +271,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($stmt_update_panorama) {
         $stmt_update_panorama->bind_param("ssssi", $titel, $beschrijving, $catalogusnummer, $afbeelding, $panorama_id);
         $stmt_update_panorama->execute();
-        $stmt_update_panorama->close(); // <-- Sluit de statement hier
+        $stmt_update_panorama->close();
     }
 
-    // Update bestaande punten - GEFIXTE VERSIE
+    // Update bestaande punten
     if (isset($_POST['punten']) && is_array($_POST['punten'])) {
         foreach ($_POST['punten'] as $punt_id => $punt_data) {
-            // Haal huidige data op om default te gebruiken
             $current_punt = null;
             foreach ($punten as $p) {
                 if ($p['id'] == $punt_id) {
@@ -284,13 +293,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             $stmt_update_punt = $conn->prepare("UPDATE punten SET x_coordinaat = ?, y_coordinaat = ?, titel = ?, omschrijving = ?, status = ? WHERE id = ? AND panorama_id = ?");
             if ($stmt_update_punt) {
-            $stmt_update_punt->bind_param("iisssii", $x, $y, $punt_titel, $punt_omschrijving, $punt_status, $punt_id, $panorama_id);
-                if (!$stmt_update_punt->execute()) {
-                    $_SESSION['error'] = "Fout bij updaten punt: " . $stmt_update_punt->error;
-                }
+                $stmt_update_punt->bind_param("iisssii", $x, $y, $punt_titel, $punt_omschrijving, $punt_status, $punt_id, $panorama_id);
+                $stmt_update_punt->execute();
                 $stmt_update_punt->close();
-            } else {
-                $_SESSION['error'] = "Fout bij voorbereiden update query voor punt.";
             }
         }
     }
@@ -341,6 +346,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Voeg nieuwe punten toe
     if (isset($_POST['new_punten']) && is_array($_POST['new_punten'])) {
+        error_log("Adding new points: " . print_r($_POST['new_punten'], true));
+        
         foreach ($_POST['new_punten'] as $temp_id => $punt_data) {
             $x = $punt_data['x'] ?? 0;
             $y = $punt_data['y'] ?? 0;
@@ -351,41 +358,51 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $stmt_insert_punt = $conn->prepare("INSERT INTO punten (panorama_id, x_coordinaat, y_coordinaat, titel, omschrijving, status, gebruiker_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
             if ($stmt_insert_punt) {
                 $stmt_insert_punt->bind_param("iiisssi", $panorama_id, $x, $y, $punt_titel, $punt_omschrijving, $punt_status, $gebruiker_id);
-                $stmt_insert_punt->execute();
-                $new_punt_id = $stmt_insert_punt->insert_id;
+                if ($stmt_insert_punt->execute()) {
+                    $new_punt_id = $stmt_insert_punt->insert_id;
+                    error_log("New point inserted with ID: $new_punt_id");
+                    
+                    // Voeg bronnen toe voor dit nieuwe punt
+                    if (isset($_POST['new_bronnen'][$temp_id]) && is_array($_POST['new_bronnen'][$temp_id])) {
+                        error_log("Adding sources for point $new_punt_id: " . print_r($_POST['new_bronnen'][$temp_id], true));
+                        
+                        foreach ($_POST['new_bronnen'][$temp_id] as $bron_temp_id => $bron_data) {
+                            $referentie_tekst = $bron_data['referentie_tekst'] ?? '';
+                            $bron_titel = $bron_data['titel'] ?? '';
+                            $auteur = $bron_data['auteur'] ?? '';
+                            $bron_afbeelding = $bron_data['bron-afbeelding'] ?? '';
+                            $bron_type = $bron_data['bron_type'] ?? 'website';
+                            $publicatie_jaar = $bron_data['publicatie_jaar'] ?? '';
+                            $catalogusnummer = $bron_data['catalogusnummer'] ?? '';
+                            $status = $bron_data['status'] ?? 'concept';
 
-                // Voeg bronnen toe voor dit nieuwe punt
-                if (isset($_POST['new_bronnen'][$temp_id]) && is_array($_POST['new_bronnen'][$temp_id])) {
-                    foreach ($_POST['new_bronnen'][$temp_id] as $bron_temp_id => $bron_data) {
-                        $referentie_tekst = $bron_data['referentie_tekst'] ?? '';
-                        $bron_titel = $bron_data['titel'] ?? '';
-                        $auteur = $bron_data['auteur'] ?? '';
-                        $bron_afbeelding = $bron_data['bron-afbeelding'] ?? '';
-                        $bron_type = $bron_data['bron_type'] ?? 'website';
-                        $publicatie_jaar = $bron_data['publicatie_jaar'] ?? '';
-                        $catalogusnummer = $bron_data['catalogusnummer'] ?? '';
-                        $status = $bron_data['status'] ?? 'concept';
+                            // Verwerk bestand upload voor deze bron
+                            $file_key = "new_bron_afbeelding_" . $temp_id . "_" . $bron_temp_id;
+                            if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
+                                error_log("File upload for source: " . $file_key);
+                                $uploaded_file = uploadFile($_FILES[$file_key]);
+                                if ($uploaded_file) {
+                                    $bron_afbeelding = $uploaded_file;
+                                    error_log("File uploaded to: $bron_afbeelding");
+                                }
+                            }
 
-                        // Verwerk bestand upload voor deze bron
-                        if (
-                            isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
-                            $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
-                        ) {
-                            $uploaded_file = uploadFile($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]);
-                            if ($uploaded_file) {
-                                $bron_afbeelding = $uploaded_file;
+                            $stmt_insert_bron = $conn->prepare("INSERT INTO bronnen (punt_id, titel, auteur, referentie_tekst, `bron-afbeelding`, bron_type, publicatie_jaar, catalogusnummer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                            if ($stmt_insert_bron) {
+                                $stmt_insert_bron->bind_param("issssssss", $new_punt_id, $bron_titel, $auteur, $referentie_tekst, $bron_afbeelding, $bron_type, $publicatie_jaar, $catalogusnummer, $status);
+                                if ($stmt_insert_bron->execute()) {
+                                    error_log("Source inserted for point $new_punt_id");
+                                } else {
+                                    error_log("Error inserting source: " . $stmt_insert_bron->error);
+                                }
+                                $stmt_insert_bron->close();
                             }
                         }
-
-                        $stmt_insert_bron = $conn->prepare("INSERT INTO bronnen (punt_id, titel, auteur, referentie_tekst, `bron-afbeelding`, bron_type, publicatie_jaar, catalogusnummer, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-                        if ($stmt_insert_bron) {
-                            $stmt_insert_bron->bind_param("issssssss", $new_punt_id, $bron_titel, $auteur, $referentie_tekst, $bron_afbeelding, $bron_type, $publicatie_jaar, $catalogusnummer, $status);
-                            $stmt_insert_bron->execute();
-                            $stmt_insert_bron->close();
-                        }
                     }
+                } else {
+                    error_log("Error inserting point: " . $stmt_insert_punt->error);
                 }
-                $stmt_insert_punt->close(); // <-- Sluit de insert_punt statement hier
+                $stmt_insert_punt->close();
             }
         }
     }
@@ -405,11 +422,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $status = $bron_data['status'] ?? 'concept';
 
                     // Verwerk bestand upload
-                    if (
-                        isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
-                        $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
-                    ) {
-                        $uploaded_file = uploadFile($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]);
+                    $file_key = "new_existing_bron_afbeelding_" . $punt_id . "_" . $bron_temp_id;
+                    if (isset($_FILES[$file_key]) && $_FILES[$file_key]['error'] === UPLOAD_ERR_OK) {
+                        $uploaded_file = uploadFile($_FILES[$file_key]);
                         if ($uploaded_file) {
                             $bron_afbeelding = $uploaded_file;
                         }
@@ -530,7 +545,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="action-header">
                         <h5>Nieuwe Bron</h5>
                         <div class="point-actions">
-                            <select class="status-select new-bron-status" name="new_bronnen[POINT_ID][TEMP_ID][status]">
+                            <select class="status-select new-bron-status" name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][status]">
                                 <option value="concept">Concept</option>
                                 <option value="gepubliceerd" selected>Gepubliceerd</option>
                                 <option value="gearchiveerd">Gearchiveerd</option>
@@ -544,14 +559,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Titel:</label>
                                 <input type="text" class="form-control new-bron-titel"
-                                    name="new_bronnen[POINT_ID][TEMP_ID][titel]" placeholder="Bron titel">
+                                    name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][titel]" placeholder="Bron titel">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Auteur:</label>
                                 <input type="text" class="form-control new-bron-auteur"
-                                    name="new_bronnen[POINT_ID][TEMP_ID][auteur]" placeholder="Auteur">
+                                    name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][auteur]" placeholder="Auteur">
                             </div>
                         </div>
                     </div>
@@ -561,7 +576,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Type:</label>
                                 <select class="form-control new-bron-type"
-                                    name="new_bronnen[POINT_ID][TEMP_ID][bron_type]">
+                                    name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][bron_type]">
                                     <option value="boek">Boek</option>
                                     <option value="artikel">Artikel</option>
                                     <option value="website" selected>Website</option>
@@ -575,14 +590,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Publicatiejaar:</label>
                                 <input type="text" class="form-control new-bron-jaar"
-                                    name="new_bronnen[POINT_ID][TEMP_ID][publicatie_jaar]" placeholder="2023">
+                                    name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][publicatie_jaar]" placeholder="2023">
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
                                 <label class="form-label">Catalogusnummer:</label>
                                 <input type="text" class="form-control new-bron-catalogus"
-                                    name="new_bronnen[POINT_ID][TEMP_ID][catalogusnummer]" placeholder="12345">
+                                    name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][catalogusnummer]" placeholder="12345">
                             </div>
                         </div>
                     </div>
@@ -590,7 +605,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="mb-3">
                         <label class="form-label">Referentie tekst:</label>
                         <textarea class="form-control new-bron-referentie"
-                            name="new_bronnen[POINT_ID][TEMP_ID][referentie_tekst]" rows="2"
+                            name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][referentie_tekst]" rows="2"
                             placeholder="Referentie tekst"></textarea>
                     </div>
 
@@ -598,14 +613,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <label class="form-label">Bron Afbeelding:</label>
                         <div class="file-upload-container" style="margin-bottom: 10px;">
                             <input type="file" class="file-upload-input new-bron-file"
-                                name="new_bron_afbeelding[POINT_ID][TEMP_ID]" accept="image/*">
+                                name="new_bron_afbeelding_TEMP_POINT_ID_TEMP_BRON_ID" accept="image/*">
                             <button type="button" class="btn btn-secondary upload-btn">
                                 <i class="fas fa-upload"></i> Kies afbeelding
                             </button>
                             <span class="file-name">Geen bestand gekozen</span>
                         </div>
                         <input type="text" class="form-control" style="margin-top: 10px;"
-                            placeholder="of voer een URL in" name="new_bronnen[POINT_ID][TEMP_ID][bron-afbeelding]">
+                            placeholder="of voer een URL in" name="new_bronnen[TEMP_POINT_ID][TEMP_BRON_ID][bron-afbeelding]">
                         <div class="bron-image-preview new-bron-preview" style="margin-top: 10px;">
                             <p class="text-muted" style="font-size: 12px;">
                                 Geen afbeelding geselecteerd
@@ -622,7 +637,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="action-header">
                         <h5>Nieuwe Bron</h5>
                         <div class="point-actions">
-                            <select class="status-select" name="new_bronnen_to_existing[POINT_ID][TEMP_ID][status]">
+                            <select class="status-select" name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][status]">
                                 <option value="concept">Concept</option>
                                 <option value="gepubliceerd" selected>Gepubliceerd</option>
                                 <option value="gearchiveerd">Gearchiveerd</option>
@@ -636,14 +651,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Titel:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][titel]" placeholder="Bron titel">
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][titel]" placeholder="Bron titel">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label">Auteur:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][auteur]" placeholder="Auteur">
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][auteur]" placeholder="Auteur">
                             </div>
                         </div>
                     </div>
@@ -653,7 +668,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Type:</label>
                                 <select class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][bron_type]">
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][bron_type]">
                                     <option value="boek">Boek</option>
                                     <option value="artikel">Artikel</option>
                                     <option value="website" selected>Website</option>
@@ -667,7 +682,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Publicatiejaar:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][publicatie_jaar]"
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][publicatie_jaar]"
                                     placeholder="2023">
                             </div>
                         </div>
@@ -675,7 +690,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                             <div class="mb-3">
                                 <label class="form-label">Catalogusnummer:</label>
                                 <input type="text" class="form-control"
-                                    name="new_bronnen_to_existing[POINT_ID][TEMP_ID][catalogusnummer]"
+                                    name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][catalogusnummer]"
                                     placeholder="12345">
                             </div>
                         </div>
@@ -684,7 +699,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <div class="mb-3">
                         <label class="form-label">Referentie tekst:</label>
                         <textarea class="form-control"
-                            name="new_bronnen_to_existing[POINT_ID][TEMP_ID][referentie_tekst]" rows="2"
+                            name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][referentie_tekst]" rows="2"
                             placeholder="Referentie tekst"></textarea>
                     </div>
 
@@ -692,7 +707,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <label class="form-label">Bron Afbeelding:</label>
                         <div class="file-upload-container" style="margin-bottom: 10px;">
                             <input type="file" class="file-upload-input new-existing-bron-file"
-                                name="new_existing_bron_afbeelding[POINT_ID][TEMP_ID]" accept="image/*">
+                                name="new_existing_bron_afbeelding_POINT_ID_TEMP_BRON_ID" accept="image/*">
                             <button type="button" class="btn btn-secondary upload-btn">
                                 <i class="fas fa-upload"></i> Kies afbeelding
                             </button>
@@ -700,7 +715,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
                         <input type="text" class="form-control" style="margin-top: 10px;"
                             placeholder="of voer een URL in"
-                            name="new_bronnen_to_existing[POINT_ID][TEMP_ID][bron-afbeelding]">
+                            name="new_bronnen_to_existing[POINT_ID][TEMP_BRON_ID][bron-afbeelding]">
                         <div class="bron-image-preview new-existing-bron-preview" style="margin-top: 10px;">
                             <p class="text-muted" style="font-size: 12px;">
                                 Geen afbeelding geselecteerd
@@ -744,8 +759,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         rows="3"><?php echo isset($panorama_row['beschrijving']) ? htmlspecialchars($panorama_row['beschrijving']) : ''; ?></textarea>
                 </div>
 
+                <!-- Fixed: Remove empty label -->
                 <div class="mb-3">
-                    <label for="afbeelding_url" class="form-label"></label>
                     <input type="hidden" class="form-control" id="afbeelding_url" name="afbeelding_url"
                         value="<?php echo isset($panorama_row['afbeelding_url']) ? htmlspecialchars($panorama_row['afbeelding_url']) : ''; ?>"
                         required>

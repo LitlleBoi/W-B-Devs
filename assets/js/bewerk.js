@@ -63,20 +63,17 @@ document.addEventListener("DOMContentLoaded", function () {
       // Maak een preview van het afbeeldingsbestand
       const file = fileInput.files[0];
       if (file && file.type.match("image.*")) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          const sourceCard = fileInput.closest(
-            ".new-source-card, .source-edit-card"
-          );
-          if (sourceCard) {
-            const previewDiv = sourceCard.querySelector(".bron-image-preview");
-            if (previewDiv) {
-              // Toon de preview afbeelding
-              previewDiv.innerHTML = `<img src="${e.target.result}" alt="Preview" style="max-width: 200px; margin-top: 10px;">`;
-            }
+        const url = URL.createObjectURL(file);
+        const sourceCard = fileInput.closest(
+          ".new-source-card, .source-edit-card"
+        );
+        if (sourceCard) {
+          const previewDiv = sourceCard.querySelector(".bron-image-preview");
+          if (previewDiv) {
+            // Toon de preview afbeelding
+            previewDiv.innerHTML = `<img src="${url}" alt="Preview" style="max-width: 200px; margin-top: 10px;">`;
           }
-        };
-        reader.readAsDataURL(file);
+        }
       }
     }
   });
