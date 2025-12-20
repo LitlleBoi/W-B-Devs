@@ -461,16 +461,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("editPanoramaForm");
   if (form) {
     form.addEventListener("submit", function (e) {
-      // console.log("Form submitted - checking status values");
-
-      // Zorg ervoor dat alle status selecties een waarde hebben
-      document.querySelectorAll(".status-select").forEach(function (select) {
-        if (!select.value) {
-          select.value = "concept";
-          // console.log("Fixed empty status for:", select.name);
-        }
-      });
-
+      // Form submission validation can be added here if needed
       return true; // Sta formulier verzending toe
     });
   }

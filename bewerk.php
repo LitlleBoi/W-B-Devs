@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Bewerk Panorama Pagina
  *
@@ -65,12 +66,12 @@ if (isset($_GET['delete_item_id']) && isset($_GET['type'])) {
         $stmt_select->bind_result($file_path);
         $stmt_select->fetch();
         $stmt_select->close();
-        
+
         // Bestand verwijderen als het lokaal is opgeslagen
         if (!empty($file_path) && strpos($file_path, 'assets/images/aanvullend/') !== false) {
             deleteFile($file_path);
         }
-        
+
         // Bron markeren als verwijderd
         $stmt = $conn->prepare("UPDATE bronnen SET deleted_at = NOW() WHERE id = ?");
         $stmt->bind_param("i", $delete_id);
@@ -132,9 +133,9 @@ if (!$panorama_row) {
     exit;
 }
 
-// Haal punten op - FIX: Zorg dat status altijd een waarde heeft
+// Haal punten op
 $punten = [];
-$stmt_punten = $conn->prepare(query: "SELECT id, x_coordinaat, y_coordinaat, panorama_id, titel, omschrijving, COALESCE(status, 'concept') as status FROM punten WHERE panorama_id = ? AND deleted_at IS NULL");
+$stmt_punten = $conn->prepare("SELECT id, x_coordinaat, y_coordinaat, panorama_id, titel, omschrijving, status FROM punten WHERE panorama_id = ? AND deleted_at IS NULL");
 if ($stmt_punten) {
     $stmt_punten->bind_param("i", $panorama_id);
     $stmt_punten->execute();
@@ -238,7 +239,8 @@ function uploadFile($fileData, $target_dir = "assets/images/aanvullend/")
 }
 
 // Bestand verwijder functie
-function deleteFile($file_path) {
+function deleteFile($file_path)
+{
     // Verwijder alleen lokale bestanden in de specifieke directory
     if (!empty($file_path) && file_exists($file_path) && strpos($file_path, 'assets/images/aanvullend/') !== false) {
         unlink($file_path);
@@ -265,22 +267,30 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Update bestaande punten - GEFIXTE VERSIE
     if (isset($_POST['punten']) && is_array($_POST['punten'])) {
         foreach ($_POST['punten'] as $punt_id => $punt_data) {
+            // Haal huidige data op om default te gebruiken
+            $current_punt = null;
+            foreach ($punten as $p) {
+                if ($p['id'] == $punt_id) {
+                    $current_punt = $p;
+                    break;
+                }
+            }
+
             $x = $punt_data['x'] ?? 0;
             $y = $punt_data['y'] ?? 0;
             $punt_titel = $punt_data['titel'] ?? '';
             $punt_omschrijving = $punt_data['omschrijving'] ?? '';
-            $punt_status = $punt_data['status'] ?? 'concept';
-
-            // Validatie: zorg dat status altijd geldig is
-            if (!in_array($punt_status, ['concept', 'gepubliceerd', 'gearchiveerd'])) {
-                $punt_status = 'concept';
-            }
+            $punt_status = !empty($punt_data['status']) ? $punt_data['status'] : ($current_punt['status'] ?? 'concept');
 
             $stmt_update_punt = $conn->prepare("UPDATE punten SET x_coordinaat = ?, y_coordinaat = ?, titel = ?, omschrijving = ?, status = ? WHERE id = ? AND panorama_id = ?");
             if ($stmt_update_punt) {
-                $stmt_update_punt->bind_param("iissiii", $x, $y, $punt_titel, $punt_omschrijving, $punt_status, $punt_id, $panorama_id);
-                $stmt_update_punt->execute();
+            $stmt_update_punt->bind_param("iisssii", $x, $y, $punt_titel, $punt_omschrijving, $punt_status, $punt_id, $panorama_id);
+                if (!$stmt_update_punt->execute()) {
+                    $_SESSION['error'] = "Fout bij updaten punt: " . $stmt_update_punt->error;
+                }
                 $stmt_update_punt->close();
+            } else {
+                $_SESSION['error'] = "Fout bij voorbereiden update query voor punt.";
             }
         }
     }
@@ -307,12 +317,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt_select->bind_result($old_file_path);
                 $stmt_select->fetch();
                 $stmt_select->close();
-                
+
                 // Oude bestand verwijderen als het lokaal is opgeslagen
                 if (!empty($old_file_path) && strpos($old_file_path, 'assets/images/aanvullend/') !== false) {
                     deleteFile($old_file_path);
                 }
-                
+
                 // Nieuw bestand uploaden
                 $uploaded_file = uploadFile($_FILES[$file_input_name]);
                 if ($uploaded_file) {
@@ -336,7 +346,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $y = $punt_data['y'] ?? 0;
             $punt_titel = $punt_data['titel'] ?? '';
             $punt_omschrijving = $punt_data['omschrijving'] ?? '';
-            $punt_status = $punt_data['status'] ?? 'concept';
+            $punt_status = $punt_data['status'] ?? 'gepubliceerd';
 
             $stmt_insert_punt = $conn->prepare("INSERT INTO punten (panorama_id, x_coordinaat, y_coordinaat, titel, omschrijving, status, gebruiker_id) VALUES (?, ?, ?, ?, ?, ?, ?)");
             if ($stmt_insert_punt) {
@@ -357,8 +367,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $status = $bron_data['status'] ?? 'concept';
 
                         // Verwerk bestand upload voor deze bron
-                        if (isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
-                            $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
+                        if (
+                            isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
+                            $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
+                        ) {
                             $uploaded_file = uploadFile($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]);
                             if ($uploaded_file) {
                                 $bron_afbeelding = $uploaded_file;
@@ -393,8 +405,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $status = $bron_data['status'] ?? 'concept';
 
                     // Verwerk bestand upload
-                    if (isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
-                        $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
+                    if (
+                        isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
+                        $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK
+                    ) {
                         $uploaded_file = uploadFile($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]);
                         if ($uploaded_file) {
                             $bron_afbeelding = $uploaded_file;
@@ -698,7 +712,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </div>
         </div>
 
-        <form method="post" id="editPanoramaForm" enctype="multipart/form-data">
+        <form method="post" id="editPanoramaForm" enctype="multipart/form-data" style="margin-bottom: 1px;">
             <!-- Gebruik panorama_id als hidden field -->
             <input type="hidden" name="id" value="<?php echo $panorama_id; ?>">
 
