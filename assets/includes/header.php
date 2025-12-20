@@ -1,4 +1,12 @@
 <?php
+/**
+ * Header Include
+ *
+ * Deze include bevat de HTML voor de header van de website, inclusief navigatie en logo.
+ * Het start ook de sessie indien nodig en toont verschillende menu-opties gebaseerd op login status.
+ */
+
+// Start sessie als deze nog niet gestart is
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }

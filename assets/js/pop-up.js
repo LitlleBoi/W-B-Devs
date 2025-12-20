@@ -1,5 +1,12 @@
+/**
+ * Pop-up JavaScript
+ *
+ * Deze JavaScript file beheert de modal/pop-up functionaliteit voor panorama punten.
+ * Het opent en sluit modals bij klikken op punten en overlay.
+ */
+
 document.addEventListener("DOMContentLoaded", function () {
-  // Open modal when clicking on a point
+  // Open modal bij klikken op een punt
   document.querySelectorAll("[data-modal-target]").forEach((button) => {
     button.addEventListener("click", () => {
       const modalId = button.getAttribute("data-modal-target");

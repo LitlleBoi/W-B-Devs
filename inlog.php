@@ -1,32 +1,42 @@
 <?php
+/**
+ * Inlog Pagina
+ *
+ * Deze pagina verwerkt gebruikersauthenticatie door email en wachtwoord te controleren
+ * tegen de database. Bij succesvolle login wordt de gebruiker doorgestuurd naar admin.php.
+ */
+
+// Start sessie voor gebruikersbeheer
 session_start();
+
+// Inclusie van database connectie
 include 'assets/includes/connectie.php';
 
+// Controleer of login formulier is ingediend
 if ((isset($_GET["email"])) && (isset($_GET["wachtwoord"]))) {
-    // prepare sql and bind parameters using mysqli
+    // Haal email en wachtwoord op uit GET parameters
     $email = $_GET["email"];
     $password = $_GET["wachtwoord"];
 
+    // Bereid SQL query voor om gebruiker te vinden
     $stmt = $conn->prepare("SELECT * FROM gebruikers WHERE email = ? AND `wachtwoord` = ?");
     if ($stmt) {
+        // Bind parameters aan de query
         $stmt->bind_param("ss", $email, $password);
+        // Voer query uit
         $stmt->execute();
         $res = $stmt->get_result();
         if ($res && $res->num_rows > 0) {
-            // user found
-            $_SESSION["login"] = "true"; {
-                header('Location: admin.php');
-            }
-
-
-
+            // Gebruiker gevonden - login succesvol
+            $_SESSION["login"] = "true";
+            // Redirect naar admin pagina
+            header('Location: admin.php');
             exit();
         }
         $stmt->close();
     } else {
-        // prepare failed - handle as needed
+        // Query voorbereiding mislukt - handel af indien nodig
     }
-
 }
 
 

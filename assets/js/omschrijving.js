@@ -1,14 +1,21 @@
-// omschrijving.js - Fixed for horizontal scrolling
-// Initialize variables
-let panoramaData = [];
-let panoramaWidth = 1182.4;
-let totalPanoramas = 0;
-let isInitialized = false;
-let scrollContainer = null;
+// omschrijving.js - Opgelost voor horizontaal scrollen
+/**
+ * Omschrijving JavaScript
+ *
+ * Deze JavaScript file laadt en beheert panorama beschrijvingsdata.
+ * Het update de zijbalk informatie gebaseerd op het huidige zichtbare panorama.
+ */
 
-// Function to initialize everything
+// Initialiseer globale variabelen
+let panoramaData = []; // Array om panorama data op te slaan
+let panoramaWidth = 1182.4; // Standaard breedte van een panorama (wordt later gedetecteerd)
+let totalPanoramas = 0; // Totaal aantal geladen panorama's
+let isInitialized = false; // Status van initialisatie
+let scrollContainer = null; // Referentie naar het scrollende container element
+
+// Hoofdfunctie om alles te initialiseren
 function initializePanoramaInfo() {
-  console.log("Initializing panorama info...");
+  // console.log("Initializing panorama info...");
 
   const info = document.getElementById("info");
   if (!info) {
@@ -16,15 +23,14 @@ function initializePanoramaInfo() {
     return;
   }
 
-  // Show loading message
+  // Toon laadbericht terwijl data wordt opgehaald
   info.innerHTML = `
         <div class="panorama-loading">
             <div>Informatie wordt geladen...</div>
         </div>
     `;
 
-  // Fetch data from PHP
-  async function name(params) {}
+  // Haal data op van PHP endpoint
   fetch("assets/includes/omschrijving-data.php")
     .then((response) => {
       if (!response.ok)
@@ -32,17 +38,17 @@ function initializePanoramaInfo() {
       return response.json();
     })
     .then((jsonData) => {
-      console.log("Raw data received:", jsonData);
+      // console.log("Raw data received:", jsonData);
 
-      // Check data format
+      // Controleer data formaat en verwerk het correct
       if (jsonData.format === "v2" && jsonData.panoramas) {
-        // New format with wrapper object
+        // Nieuw formaat met wrapper object
         panoramaData = jsonData.panoramas;
-        console.log("Using v2 format data:", panoramaData);
+        // console.log("Using v2 format data:", panoramaData);
       } else if (Array.isArray(jsonData)) {
-        // Check if it's flat array [title1, desc1, title2, desc2...]
+        // Controleer of het een platte array is [titel1, desc1, titel2, desc2...]
         if (jsonData.length > 0 && typeof jsonData[0] === "string") {
-          // Convert flat array to structured objects
+          // Converteer platte array naar gestructureerde objecten
           panoramaData = [];
           for (let i = 0; i < jsonData.length; i += 2) {
             panoramaData.push({
@@ -53,43 +59,43 @@ function initializePanoramaInfo() {
               jaar: "2024",
             });
           }
-          console.log("Converted flat array to structured data");
+          // console.log("Converted flat array to structured data");
         } else {
-          // Already array of objects
+          // Is al een array van objecten
           panoramaData = jsonData;
-          console.log("Data is already array of objects");
+          // console.log("Data is already array of objects");
         }
       } else if (jsonData.panoramas && Array.isArray(jsonData.panoramas)) {
-        // Alternative format with panoramas property
+        // Alternatief formaat met panoramas property
         panoramaData = jsonData.panoramas;
-        console.log("Using panoramas property data");
+        // console.log("Using panoramas property data");
       } else {
         console.error("Unexpected data format:", jsonData);
         panoramaData = [];
       }
 
       totalPanoramas = panoramaData.length;
-      console.log(`Loaded ${totalPanoramas} panoramas`);
+      // console.log(`Loaded ${totalPanoramas} panoramas`);
 
-      // Debug: show first few items
+      // Debug: toon eerste paar items
       if (panoramaData.length > 0) {
-        console.log("First panorama item:", panoramaData[0]);
-        console.log("Sample catalog number:", panoramaData[0].catalogusnummer);
+        // console.log("First panorama item:", panoramaData[0]);
+        // console.log("Sample catalog number:", panoramaData[0].catalogusnummer);
       }
 
-      // Try to detect actual panorama width
+      // Probeer werkelijke panorama breedte te detecteren
       detectPanoramaWidth();
 
-      // Find the scroll container
+      // Zoek het scroll container element
       findScrollContainer();
 
-      // Show initial info
+      // Toon initiële informatie
       updateSidebarInfo();
 
-      // Mark as initialized
+      // Markeer als geïnitialiseerd
       isInitialized = true;
 
-      // Setup scroll listener
+      // Stel scroll listener in
       setupScrollListener();
     })
     .catch((error) => {
@@ -103,9 +109,9 @@ function initializePanoramaInfo() {
     });
 }
 
-// Function to find which container is scrolling
+// Functie om het scrollende container element te vinden
 function findScrollContainer() {
-  // Check common scrolling containers
+  // Controleer veelvoorkomende scroll containers
   const possibleContainers = [
     ".panorama-strip",
     ".panorama-container",
@@ -116,78 +122,74 @@ function findScrollContainer() {
   for (const selector of possibleContainers) {
     const element = document.querySelector(selector);
     if (element) {
-      // Check if element is scrollable horizontally
+      // Controleer of element horizontaal scrollbaar is
       const styles = window.getComputedStyle(element);
       const overflowX = styles.overflowX;
 
       if (overflowX === "auto" || overflowX === "scroll") {
-        console.log(`Found scroll container: ${selector}`);
+        // console.log(`Found scroll container: ${selector}`);
         scrollContainer = element;
         return element;
       }
     }
   }
 
-  // If no container found, default to window
-  console.log("No scroll container found, defaulting to window");
+  // Als geen container gevonden, standaard naar window
+  // console.log("No scroll container found, defaulting to window");
   scrollContainer = window;
   return window;
 }
 
-// Function to detect panorama width
+// Functie om panorama breedte te detecteren
 function detectPanoramaWidth() {
   const panoramaImg = document.querySelector(".panorama img");
   if (panoramaImg && panoramaImg.width > 0) {
     panoramaWidth = panoramaImg.width;
-    console.log(`Panorama width detected: ${panoramaWidth}px`);
+    // console.log(`Panorama width detected: ${panoramaWidth}px`);
   } else {
-    // Try to get width from CSS or calculate
+    // Probeer breedte te krijgen van CSS of bereken het
     const panoramaDiv = document.querySelector(".panorama");
     if (panoramaDiv) {
       panoramaWidth = panoramaDiv.offsetWidth;
-      console.log(`Panorama width from offset: ${panoramaWidth}px`);
+      // console.log(`Panorama width from offset: ${panoramaWidth}px`);
     }
   }
 }
 
-// Function to get scroll position from the correct element
+// Functie om huidige scroll positie en pagina te berekenen
 function getCurrentPage() {
   let scrollX = 0;
 
   if (scrollContainer === window) {
     // Window scrolling
     scrollX = window.scrollX || window.pageXOffset || 0;
-    console.log(`Window scrollX: ${scrollX}`);
+    // console.log(`Window scrollX: ${scrollX}`);
   } else {
     // Element scrolling
     scrollX = scrollContainer.scrollLeft || 0;
-    console.log(
-      `${
-        scrollContainer.className || scrollContainer.tagName
-      } scrollLeft: ${scrollX}`
-    );
+    // console.log(
+    //   `${scrollContainer.className || scrollContainer.tagName} scrollLeft: ${scrollX}`
+    // );
   }
 
   const viewportWidth = window.innerWidth;
   const totalWidth = panoramaWidth * totalPanoramas;
 
-  // Calculate which panorama is in view
-  // Use 50% (center of viewport) for better accuracy
+  // Bereken welk panorama in beeld is
+  // Gebruik 50% (midden van viewport) voor betere nauwkeurigheid
   const viewportPosition = 0.5;
   const referencePoint = scrollX + viewportWidth * viewportPosition;
 
   let pageIndex = Math.floor(referencePoint / panoramaWidth);
   pageIndex = Math.max(0, Math.min(pageIndex, totalPanoramas - 1));
 
-  console.log(
-    `Scroll position: ${scrollX}, Reference point: ${referencePoint.toFixed(
-      0
-    )}, Page: ${pageIndex + 1} of ${totalPanoramas}`
-  );
+  // console.log(
+  //   `Scroll position: ${scrollX}, Reference point: ${referencePoint.toFixed(0)}, Page: ${pageIndex + 1} of ${totalPanoramas}`
+  // );
   return pageIndex;
 }
 
-// Function to update sidebar info
+// Functie om zijbalk informatie bij te werken
 function updateSidebarInfo() {
   const info = document.getElementById("info");
   if (!info || panoramaData.length === 0) return;
@@ -195,11 +197,9 @@ function updateSidebarInfo() {
   const currentPageIndex = getCurrentPage();
   const currentPageNumber = currentPageIndex + 1;
 
-  console.log(
-    `Updating sidebar for page ${currentPageNumber} (index ${currentPageIndex})`
-  );
+  // console.log(`Updating sidebar for page ${currentPageNumber} (index ${currentPageIndex})`);
 
-  // Get current panorama item
+  // Haal huidig panorama item op
   const panoramaItem = panoramaData[currentPageIndex];
 
   if (!panoramaItem) {
@@ -212,7 +212,7 @@ function updateSidebarInfo() {
     return;
   }
 
-  // Extract data with fallbacks
+  // Extraheer data met fallback waarden
   const title =
     panoramaItem.titel || panoramaItem.title || `Panorama ${currentPageNumber}`;
   const description =
@@ -232,6 +232,7 @@ function updateSidebarInfo() {
     ((currentPageIndex + 1) / totalPanoramas) * 100
   );
 
+  // Bouw de HTML voor de zijbalk
   info.innerHTML = `
         <div class="panorama-info">
             <div class="panorama-current">
@@ -286,42 +287,43 @@ function updateSidebarInfo() {
     `;
 }
 
-// Setup scroll listener for horizontal scrolling
+// Stel scroll listener in voor horizontaal scrollen
 function setupScrollListener() {
-  console.log("Setting up horizontal scroll listener...");
+  // console.log("Setting up horizontal scroll listener...");
 
-  let ticking = false;
+  let ticking = false; // Flag om te voorkomen dat te veel events worden verwerkt
 
   function handleScroll() {
     if (!isInitialized || ticking) return;
 
     ticking = true;
 
+    // Gebruik requestAnimationFrame voor smooth updates
     requestAnimationFrame(() => {
-      console.log("Scroll detected, updating info...");
+      // console.log("Scroll detected, updating info...");
       updateSidebarInfo();
       ticking = false;
     });
   }
 
-  // Attach scroll listener to the found container
+  // Voeg scroll listener toe aan het gevonden container element
   if (scrollContainer && scrollContainer !== window) {
-    console.log(`Attaching scroll listener to:`, scrollContainer);
+    // console.log(`Attaching scroll listener to:`, scrollContainer);
     scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
   } else {
-    console.log("Attaching scroll listener to window");
+    // console.log("Attaching scroll listener to window");
     window.addEventListener("scroll", handleScroll, { passive: true });
   }
 
-  // Also add resize listener in case viewport changes
+  // Voeg ook resize listener toe voor geval viewport verandert
   window.addEventListener("resize", handleScroll, { passive: true });
 
-  // Add wheel listener for better detection
+  // Voeg wheel listener toe voor betere detectie
   document.addEventListener(
     "wheel",
     function (e) {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-        // Horizontal wheel scroll detected
+        // Horizontaal wiel scroll gedetecteerd
         handleScroll();
       }
     },
@@ -329,14 +331,14 @@ function setupScrollListener() {
   );
 }
 
-// Initialize when DOM is fully loaded
+// Initialiseer wanneer DOM volledig geladen is
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("DOM loaded, initializing panorama info...");
-  // Small delay to ensure all elements are rendered
+  // console.log("DOM loaded, initializing panorama info...");
+  // Korte vertraging om zeker te weten dat alle elementen gerenderd zijn
   setTimeout(initializePanoramaInfo, 500);
 });
 
-// If DOM is already loaded
+// Als DOM al geladen is
 if (
   document.readyState === "interactive" ||
   document.readyState === "complete"
@@ -344,15 +346,17 @@ if (
   setTimeout(initializePanoramaInfo, 500);
 }
 
-// Debug functions
-window.debugPanorama = function () {
-  console.log("=== DEBUG INFO ===");
-  console.log("Panorama Data:", panoramaData);
-  console.log("Total Panoramas:", totalPanoramas);
-  console.log("Panorama Width:", panoramaWidth);
-  console.log("Scroll Container:", scrollContainer);
+// ==================== DEBUG FUNCTIES ====================
 
-  // Check which element is actually scrollable
+// Debug functie om alle info te tonen
+window.debugPanorama = function () {
+  // console.log("=== DEBUG INFO ===");
+  // console.log("Panorama Data:", panoramaData);
+  // console.log("Total Panoramas:", totalPanoramas);
+  // console.log("Panorama Width:", panoramaWidth);
+  // console.log("Scroll Container:", scrollContainer);
+
+  // Controleer welk element daadwerkelijk scrollbaar is
   const checkElementScroll = (selector) => {
     const el = document.querySelector(selector);
     if (el) {
@@ -381,28 +385,28 @@ window.debugPanorama = function () {
   elementsToCheck.forEach((selector) => {
     const info = checkElementScroll(selector);
     if (info) {
-      console.log(`Element ${selector}:`, info);
+      // console.log(`Element ${selector}:`, info);
     }
   });
 
-  console.log("Window scrollX:", window.scrollX || window.pageXOffset);
-  console.log("Window innerWidth:", window.innerWidth);
-  console.log("Current page index:", getCurrentPage());
-  console.log("Current page number:", getCurrentPage() + 1);
-  console.log("==================");
+  // console.log("Window scrollX:", window.scrollX || window.pageXOffset);
+  // console.log("Window innerWidth:", window.innerWidth);
+  // console.log("Current page index:", getCurrentPage());
+  // console.log("Current page number:", getCurrentPage() + 1);
+  // console.log("==================");
 };
 
+// Forceer update van zijbalk
 window.forceUpdate = updateSidebarInfo;
 
+// Testfunctie om naar specifieke pagina te scrollen
 window.testClick = function (pageNumber) {
   const pageIndex = pageNumber - 1;
   const scrollPosition = pageIndex * panoramaWidth;
 
-  console.log(
-    `Testing scroll to page ${pageNumber} (position: ${scrollPosition}px)`
-  );
+  // console.log(`Testing scroll to page ${pageNumber} (position: ${scrollPosition}px)`);
 
-  // Scroll the found container
+  // Scroll het gevonden container element
   if (scrollContainer && scrollContainer !== window) {
     scrollContainer.scrollTo({
       left: scrollPosition,
@@ -416,11 +420,11 @@ window.testClick = function (pageNumber) {
   }
 };
 
-// Manual test function to verify scroll detection
+// Handmatige testfunctie om scroll detectie te verifiëren
 window.testScrollDetection = function () {
-  console.log("=== TESTING SCROLL DETECTION ===");
+  // console.log("=== TESTING SCROLL DETECTION ===");
 
-  // Simulate scrolling by changing scroll position
+  // Simuleer scrollen door scroll positie te veranderen
   const testScrollPositions = [
     0,
     panoramaWidth * 0.5,
@@ -429,7 +433,7 @@ window.testScrollDetection = function () {
   ];
 
   testScrollPositions.forEach((pos, index) => {
-    console.log(`\nTest ${index + 1}: Setting scroll to ${pos}px`);
+    // console.log(`\nTest ${index + 1}: Setting scroll to ${pos}px`);
 
     if (scrollContainer && scrollContainer !== window) {
       scrollContainer.scrollLeft = pos;
@@ -437,10 +441,11 @@ window.testScrollDetection = function () {
       window.scrollTo(pos, 0);
     }
 
-    // Wait a bit then check
+    // Wacht even en controleer dan
     setTimeout(() => {
-      console.log(`Current page after scroll: ${getCurrentPage() + 1}`);
+      // console.log(`Current page after scroll: ${getCurrentPage() + 1}`);
       updateSidebarInfo();
     }, 100);
   });
 };
+// ==================== END OF FILE ====================

@@ -1,16 +1,19 @@
 <?php
+// Foutmeldingen inschakelen voor debugging
 ini_set('display_errors', '1');
 ini_set('display_startup_errors', '1');
 error_reporting(E_ALL);
-// omschrijving-data.php
+
+// Inclusie van database selecties
 include 'select.php';
 
-// Format data for JavaScript
+// Format data voor JavaScript gebruik
 $output = [
     'format' => 'v2',
     'panoramas' => []
 ];
 
+// Loop door alle panorama's en formatteer de data
 foreach ($info as $panorama) {
     $output['panoramas'][] = [
         'titel' => $panorama['titel'],
@@ -23,13 +26,15 @@ foreach ($info as $panorama) {
     ];
 }
 
+// Stel content type in als JSON
 header('Content-Type: application/json');
 
-// Clean any buffered output before sending JSON
+// Maak buffer schoon voordat JSON wordt verzonden
 ob_clean();
 
-// Suppress any potential warnings/notices in output
+// Onderdruk mogelijke warnings/notices in output
 error_reporting(0);
 
+// Output JSON data
 echo json_encode($output);
 ?>

@@ -1,3 +1,41 @@
+<?php
+/**
+ * Admin Dashboard Pagina
+ *
+ * Deze pagina biedt een administratieve interface voor het beheren van panorama's.
+ * Het bevat functionaliteit om panorama-items in de database te bekijken, bewerken en beheren.
+ * Toegang is beperkt tot ingelogde gebruikers alleen.
+ */
+
+// Inclusief benodigde bestanden en start sessie
+session_start();
+
+// Eenvoudige toegangscontrole: alleen toestaan wanneer ingelogd
+if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
+    header('Location: inlog.php');
+    exit();
+}
+
+include 'assets/includes/connectie.php';
+
+// Controleer databaseverbinding
+if (!$conn) {
+    die("Databaseverbinding mislukt");
+}
+
+// Haal panorama's op uit database
+$sql = "SELECT * FROM panorama ORDER BY aangemaakt_op DESC";
+$result = $conn->query($sql);
+
+// Controleer of query succesvol was
+if ($result === false) {
+    die("Query mislukt: " . $conn->error);
+}
+
+// Verkrijg totaal aantal panorama's
+$total_panoramas = $result->num_rows;
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,34 +51,6 @@
 </head>
 
 <body class="admin-page">
-    <?php
-    session_start();
-    // simple access control: only allow when logged in
-    if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
-        header('Location: inlog.php');
-        exit();
-    }
-
-    include 'assets/includes/connectie.php';
-
-    // Controleer database connectie
-    if (!$conn) {
-        die("Database connection failed");
-    }
-
-    // Haal panorama's op
-    $sql = "SELECT * FROM panorama ORDER BY aangemaakt_op DESC";
-    $result = $conn->query($sql);
-
-    // Controleer of query succesvol was
-    if ($result === false) {
-        die("Query failed: " . $conn->error);
-    }
-
-    // Aantal panorama's
-    $total_panoramas = $result->num_rows;
-    ?>
-
     <?php include "assets/includes/header.php"; ?>
 
     <div class="admin-container">

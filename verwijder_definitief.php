@@ -1,17 +1,29 @@
 <?php
+/**
+ * Definitief Verwijderen Pagina
+ *
+ * Deze pagina verwerkt het definitief verwijderen van soft-deleted items (punten en bronnen).
+ * Alleen ingelogde gebruikers kunnen deze actie uitvoeren. Het verwijderd items uit de database.
+ */
 
+// Start sessie voor gebruikersbeheer
 session_start();
+
+// Controleer of gebruiker is ingelogd
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
     header('Location: inlog.php');
     exit();
 }
 
+// Inclusie van database connectie
 include 'assets/includes/connectie.php';
 
+// Controleer of type en id parameters zijn opgegeven
 if (isset($_GET['type']) && isset($_GET['id'])) {
     $type = $_GET['type'];
     $id = intval($_GET['id']);
 
+    // Bepaal welke query gebruikt moet worden op basis van type
     switch ($type) {
         case 'punt':
             // Eerst gekoppelde bronnen definitief verwijderen
@@ -28,6 +40,7 @@ if (isset($_GET['type']) && isset($_GET['id'])) {
             exit();
     }
 
+    // Voer de verwijder query uit als deze is ingesteld
     if ($stmt) {
         $stmt->bind_param("i", $id);
         if ($stmt->execute()) {
@@ -39,6 +52,7 @@ if (isset($_GET['type']) && isset($_GET['id'])) {
     }
 }
 
+// Redirect terug naar de verwijderde items pagina
 header('Location: verwijdeerd.php');
 exit();
 ?>

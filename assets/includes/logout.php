@@ -1,7 +1,18 @@
 <?php
+/**
+ * Logout Include
+ *
+ * Deze include verwerkt het uitloggen van gebruikers.
+ * Het vernietigt alle sessie data en cookies, en redirect naar de hoofdpagina.
+ */
+
+// Start sessie
 session_start();
-// Destroy all session data and redirect to login
+
+// Vernietig alle sessie data
 $_SESSION = array();
+
+// Vernietig sessie cookie als deze gebruikt wordt
 if (ini_get("session.use_cookies")) {
     $params = session_get_cookie_params();
     setcookie(
@@ -14,6 +25,10 @@ if (ini_get("session.use_cookies")) {
         $params["httponly"]
     );
 }
+
+// Vernietig de sessie
 session_destroy();
+
+// Redirect naar hoofdpagina
 header('Location:index.php');
 exit();

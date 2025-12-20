@@ -1,19 +1,30 @@
 <?php
+/**
+ * Bewerk Panorama Pagina
+ *
+ * Deze pagina stelt gebruikers in staat om bestaande panorama's te bewerken.
+ * Functionaliteiten omvatten het bijwerken van panorama details, toevoegen/bewerken/verwijderen van punten,
+ * en beheren van bronnen gekoppeld aan punten. Toegang is beperkt tot ingelogde gebruikers.
+ */
+
+// Start sessie voor gebruikersbeheer
 session_start();
 
-// Simple access control
+// Eenvoudige toegangscontrole - alleen ingelogde gebruikers mogen deze pagina bekijken
 if (!isset($_SESSION['login']) || $_SESSION['login'] !== 'true') {
     header('Location: inlog.php');
     exit();
 }
 
+// Include database connectie bestand
 include 'assets/includes/connectie.php';
 
+// Controleer of de database connectie succesvol is
 if (!$conn) {
-    die("Database connection failed");
+    die("Database connectie mislukt");
 }
 
-// EERST panorama_id krijgen - corrigeer de parameter naam
+// Haal panorama_id op uit GET of POST parameters - ondersteunt verschillende parameter namen voor compatibiliteit
 $panorama_id = 0;
 
 if (isset($_GET['panorama_id']) && (int) $_GET['panorama_id'] > 0) {
@@ -24,19 +35,22 @@ if (isset($_GET['panorama_id']) && (int) $_GET['panorama_id'] > 0) {
     $panorama_id = (int) $_POST['id'];
 }
 
+// Valideer dat panorama_id geldig is
 if ($panorama_id <= 0) {
     echo "Ongeldig panorama ID";
     exit;
 }
 
+// Haal gebruiker_id op uit sessie, standaard naar 1 als niet ingesteld
 $gebruiker_id = isset($_SESSION['gebruiker_id']) ? $_SESSION['gebruiker_id'] : 1;
 
-// Delete actions - gebruik item_id voor punt/bron
+// Verwijder acties - gebruik item_id voor punt/bron
 if (isset($_GET['delete_item_id']) && isset($_GET['type'])) {
     $delete_id = intval($_GET['delete_item_id']);
     $type = $_GET['type'];
 
     if ($type === 'punt') {
+        // Soft delete van een punt: zet deleted_at timestamp
         $stmt = $conn->prepare("UPDATE punten SET deleted_at = NOW() WHERE id = ? AND panorama_id = ?");
         $stmt->bind_param("ii", $delete_id, $panorama_id);
         if ($stmt->execute()) {
@@ -44,7 +58,7 @@ if (isset($_GET['delete_item_id']) && isset($_GET['type'])) {
         }
         $stmt->close();
     } elseif ($type === 'bron') {
-        // Eerst de bestandspad ophalen om de foto te verwijderen
+        // Eerst het bestandspad ophalen om de foto te verwijderen
         $stmt_select = $conn->prepare("SELECT `bron-afbeelding` FROM bronnen WHERE id = ?");
         $stmt_select->bind_param("i", $delete_id);
         $stmt_select->execute();
@@ -70,7 +84,7 @@ if (isset($_GET['delete_item_id']) && isset($_GET['type'])) {
     exit();
 }
 
-// Status change via GET - gebruik item_id
+// Status wijziging via GET - gebruik item_id
 if (isset($_GET['change_status']) && isset($_GET['item_id']) && isset($_GET['type']) && isset($_GET['status'])) {
     $item_id = intval($_GET['item_id']);
     $type = $_GET['type'];
@@ -98,17 +112,17 @@ if (isset($_GET['change_status']) && isset($_GET['item_id']) && isset($_GET['typ
     }
 }
 
-// Get panorama data
+// Haal panorama data op
 $stmt_panorama = $conn->prepare("SELECT * FROM panorama WHERE id = ?");
 if (!$stmt_panorama) {
-    die("Prepare failed: " . $conn->error);
+    die("Prepare mislukt: " . $conn->error);
 }
 $stmt_panorama->bind_param("i", $panorama_id);
 $stmt_panorama->execute();
 $result_panorama = $stmt_panorama->get_result();
 
 if (!$result_panorama) {
-    die("Query failed: " . $conn->error);
+    die("Query mislukt: " . $conn->error);
 }
 
 $panorama_row = $result_panorama->fetch_assoc();
@@ -118,9 +132,9 @@ if (!$panorama_row) {
     exit;
 }
 
-// Get points - FIX: Zorg dat status altijd een waarde heeft
+// Haal punten op - FIX: Zorg dat status altijd een waarde heeft
 $punten = [];
-$stmt_punten = $conn->prepare("SELECT id, x_coordinaat, y_coordinaat, panorama_id, titel, omschrijving, COALESCE(status, 'concept') as status FROM punten WHERE panorama_id = ? AND deleted_at IS NULL");
+$stmt_punten = $conn->prepare(query: "SELECT id, x_coordinaat, y_coordinaat, panorama_id, titel, omschrijving, COALESCE(status, 'concept') as status FROM punten WHERE panorama_id = ? AND deleted_at IS NULL");
 if ($stmt_punten) {
     $stmt_punten->bind_param("i", $panorama_id);
     $stmt_punten->execute();
@@ -130,7 +144,7 @@ if ($stmt_punten) {
         while ($punt_row = $result_punten->fetch_assoc()) {
             $punt_id = $punt_row['id'];
 
-            // Get sources for this point
+            // Haal bronnen op voor dit punt
             $bronnen = [];
             $stmt_bronnen = $conn->prepare("SELECT * FROM bronnen WHERE punt_id = ? AND deleted_at IS NULL");
             if ($stmt_bronnen) {
@@ -169,7 +183,7 @@ if ($stmt_punten) {
     }
 }
 
-// Messages
+// Berichten tonen
 if (isset($_SESSION['success'])) {
     $success_msg = $_SESSION['success'];
     unset($_SESSION['success']);
@@ -180,17 +194,20 @@ if (isset($_SESSION['error'])) {
     unset($_SESSION['error']);
 }
 
-// File upload function
+// Bestand upload functie
 function uploadFile($fileData, $target_dir = "assets/images/aanvullend/")
 {
+    // Controleer of er geen bestand is geüpload
     if (!isset($fileData['error']) || $fileData['error'] === UPLOAD_ERR_NO_FILE) {
         return null;
     }
 
+    // Controleer of upload succesvol was
     if ($fileData['error'] !== UPLOAD_ERR_OK) {
         return null;
     }
 
+    // Maak target directory aan als deze niet bestaat
     if (!file_exists($target_dir)) {
         mkdir($target_dir, 0777, true);
     }
@@ -202,31 +219,37 @@ function uploadFile($fileData, $target_dir = "assets/images/aanvullend/")
 
     $allowed_types = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
 
+    // Controleer bestandstype
     if (!in_array($file_ext, $allowed_types)) {
         return null;
     }
 
+    // Controleer bestandsgrootte (max 5MB)
     if ($fileData['size'] > 5000000) {
         return null;
     }
 
+    // Verplaats geüpload bestand naar target directory
     if (move_uploaded_file($fileData['tmp_name'], $target_file)) {
         return $target_file;
     }
 
     return null;
 }
-// File delete function
+
+// Bestand verwijder functie
 function deleteFile($file_path) {
+    // Verwijder alleen lokale bestanden in de specifieke directory
     if (!empty($file_path) && file_exists($file_path) && strpos($file_path, 'assets/images/aanvullend/') !== false) {
         unlink($file_path);
         return true;
     }
     return false;
 }
-// Handle form submission
+
+// Verwerk formulier inzending
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Update panorama basics
+    // Update panorama basisgegevens
     $titel = $_POST['titel'] ?? '';
     $beschrijving = $_POST['beschrijving'] ?? '';
     $catalogusnummer = $_POST['catalogusnummer'] ?? '';
@@ -239,7 +262,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $stmt_update_panorama->close(); // <-- Sluit de statement hier
     }
 
-    // Update existing points - FIXED VERSION
+    // Update bestaande punten - GEFIXTE VERSIE
     if (isset($_POST['punten']) && is_array($_POST['punten'])) {
         foreach ($_POST['punten'] as $punt_id => $punt_data) {
             $x = $punt_data['x'] ?? 0;
@@ -262,7 +285,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Update existing sources
+    // Update bestaande bronnen
     if (isset($_POST['bronnen']) && is_array($_POST['bronnen'])) {
         foreach ($_POST['bronnen'] as $bron_id => $bron_data) {
             $referentie_tekst = $bron_data['referentie_tekst'] ?? '';
@@ -274,7 +297,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $catalogusnummer = $bron_data['catalogusnummer'] ?? '';
             $status = $bron_data['status'] ?? 'concept';
 
-            // Check for uploaded file
+            // Controleer op geüpload bestand
             $file_input_name = "bron_afbeelding_" . $bron_id;
             if (isset($_FILES[$file_input_name]) && $_FILES[$file_input_name]['error'] === UPLOAD_ERR_OK) {
                 // Eerst het huidige bestandspad ophalen om te verwijderen
@@ -306,7 +329,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Add new points
+    // Voeg nieuwe punten toe
     if (isset($_POST['new_punten']) && is_array($_POST['new_punten'])) {
         foreach ($_POST['new_punten'] as $temp_id => $punt_data) {
             $x = $punt_data['x'] ?? 0;
@@ -321,7 +344,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $stmt_insert_punt->execute();
                 $new_punt_id = $stmt_insert_punt->insert_id;
 
-                // Add sources for this new point
+                // Voeg bronnen toe voor dit nieuwe punt
                 if (isset($_POST['new_bronnen'][$temp_id]) && is_array($_POST['new_bronnen'][$temp_id])) {
                     foreach ($_POST['new_bronnen'][$temp_id] as $bron_temp_id => $bron_data) {
                         $referentie_tekst = $bron_data['referentie_tekst'] ?? '';
@@ -333,7 +356,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         $catalogusnummer = $bron_data['catalogusnummer'] ?? '';
                         $status = $bron_data['status'] ?? 'concept';
 
-                        // Handle file upload for this source
+                        // Verwerk bestand upload voor deze bron
                         if (isset($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]) &&
                             $_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
                             $uploaded_file = uploadFile($_FILES['new_bron_afbeelding'][$temp_id][$bron_temp_id]);
@@ -355,7 +378,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
     }
 
-    // Add new sources to existing points
+    // Voeg nieuwe bronnen toe aan bestaande punten
     if (isset($_POST['new_bronnen_to_existing']) && is_array($_POST['new_bronnen_to_existing'])) {
         foreach ($_POST['new_bronnen_to_existing'] as $punt_id => $bronnen_data) {
             if (is_array($bronnen_data)) {
@@ -369,7 +392,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     $catalogusnummer = $bron_data['catalogusnummer'] ?? '';
                     $status = $bron_data['status'] ?? 'concept';
 
-                    // Handle file upload
+                    // Verwerk bestand upload
                     if (isset($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]) &&
                         $_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]['error'] === UPLOAD_ERR_OK) {
                         $uploaded_file = uploadFile($_FILES['new_existing_bron_afbeelding'][$punt_id][$bron_temp_id]);
@@ -411,7 +434,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <?php include 'assets/includes/header.php'; ?>
 
     <div class="edit-form-container">
-        <!-- Messages -->
+        <!-- Berichten -->
         <?php if (isset($success_msg)): ?>
             <div class="alert alert-success">
                 <?php echo htmlspecialchars($success_msg); ?>
@@ -430,7 +453,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         <!-- Templates -->
         <div class="templates" style="display: none;">
-            <!-- Template for new point -->
+            <!-- Template voor nieuw punt -->
             <div id="newPointTemplate">
                 <div class="new-point-card" data-temp-id="">
                     <div class="action-header">
@@ -474,20 +497,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         </div>
                     </div>
 
-                    <!-- Sources for this point -->
+                    <!-- Bronnen voor dit punt -->
                     <div class="new-bronnen-for-point" style="margin-top: 20px;">
                         <button type="button" class="btn btn-success add-new-bron-to-point"
                             style="margin-bottom: 15px;">
                             + Bron Toevoegen aan dit Punt
                         </button>
                         <div class="point-bronnen-container">
-                            <!-- New sources will be added here -->
+                            <!-- Nieuwe bronnen worden hier toegevoegd -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Template for new source (for NEW points) -->
+            <!-- Template voor nieuwe bron (voor NIEUWE punten) -->
             <div id="newBronTemplate">
                 <div class="new-source-card" data-temp-id="">
                     <div class="action-header">
@@ -579,7 +602,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
             </div>
 
-            <!-- Template for new source (for EXISTING points) -->
+            <!-- Template voor nieuwe bron (voor BESTAANDE punten) -->
             <div id="newBronToExistingTemplate">
                 <div class="new-source-card" data-temp-id="">
                     <div class="action-header">
@@ -746,7 +769,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
             </div>
 
-            <!-- Existing Points Editing -->
+            <!-- Bestaande Punten Bewerken -->
             <div class="form-section">
                 <div class="action-header">
                     <h3>Punten Bewerken</h3>
@@ -772,32 +795,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                         <?php echo $punt_status; ?>
                                     </span>
                                     <select class="status-select" name="punten[<?php echo $punt['id']; ?>][status]">
-                                        <option value="concept" <?php echo $punt_status === 'concept' ? 'selected' : ''; ?>>
-                                            Concept</option>
+                                        <option value="concept" <?php echo $punt_status === 'concept' ? 'selected' : ''; ?>>Concept</option>
                                         <option value="gepubliceerd" <?php echo $punt_status === 'gepubliceerd' ? 'selected' : ''; ?>>Gepubliceerd</option>
                                         <option value="gearchiveerd" <?php echo $punt_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
                                     </select>
 
-                                    <!-- DELETE button - GECORRIGEERD -->
+                                    <!-- VERWIJDER knop - GECORRIGEERD -->
                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $punt['id']; ?>&type=punt"
                                         class="delete-btn"
                                         onclick="return confirm('Weet je zeker dat je dit punt wilt verwijderen?')">
                                         × Verwijder
                                     </a>
 
-                                    <!-- PUBLISH button - GECORRIGEERD -->
+                                    <!-- PUBLICEER knop - GECORRIGEERD -->
                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gepubliceerd"
                                         class="btn btn-small btn-success">
                                         Publiceer
                                     </a>
 
-                                    <!-- ARCHIVE button -->
+                                    <!-- ARCHIVEER knop -->
                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=gearchiveerd"
                                         class="btn btn-small btn-secondary">
                                         Archiveer
                                     </a>
 
-                                    <!-- CONCEPT button -->
+                                    <!-- CONCEPT knop -->
                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $punt['id']; ?>&type=punt&status=concept"
                                         class="btn btn-small btn-warning">
                                         Concept
@@ -839,7 +861,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                 </div>
                             </div>
 
-                            <!-- Existing Sources -->
+                            <!-- Bestaande Bronnen -->
                             <?php if (!empty($punt['bronnen'])): ?>
                                 <div class="mt-4">
                                     <div class="action-header">
@@ -870,26 +892,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                                         <option value="gearchiveerd" <?php echo $bron_status === 'gearchiveerd' ? 'selected' : ''; ?>>Gearchiveerd</option>
                                                     </select>
 
-                                                    <!-- DELETE button voor bron - GECORRIGEERD -->
+                                                    <!-- VERWIJDER knop voor bron - GECORRIGEERD -->
                                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&delete_item_id=<?php echo $bron['id']; ?>&type=bron"
                                                         class="delete-btn"
                                                         onclick="return confirm('Weet je zeker dat je deze bron wilt verwijderen?')">
                                                         × Verwijder
                                                     </a>
 
-                                                    <!-- PUBLISH button voor bron - GECORRIGEERD -->
+                                                    <!-- PUBLICEER knop voor bron - GECORRIGEERD -->
                                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gepubliceerd"
                                                         class="btn btn-small btn-success">
                                                         Publiceer
                                                     </a>
 
-                                                    <!-- ARCHIVE button voor bron -->
+                                                    <!-- ARCHIVEER knop voor bron -->
                                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=gearchiveerd"
                                                         class="btn btn-small btn-secondary">
                                                         Archiveer
                                                     </a>
 
-                                                    <!-- CONCEPT button voor bron -->
+                                                    <!-- CONCEPT knop voor bron -->
                                                     <a href="bewerk.php?panorama_id=<?php echo $panorama_id; ?>&change_status=1&item_id=<?php echo $bron['id']; ?>&type=bron&status=concept"
                                                         class="btn btn-small btn-warning">
                                                         Concept
@@ -954,8 +976,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                             </div>
 
                                             <div class="mb-3">
-                                                <label for="bron_referentie_<?php echo $bron['id']; ?>" class="form-label">Referentie
-                                                    tekst:</label>
+                                                <label for="bron_referentie_<?php echo $bron['id']; ?>" class="form-label">Referentie tekst:</label>
                                                 <textarea class="form-control" id="bron_referentie_<?php echo $bron['id']; ?>"
                                                     name="bronnen[<?php echo $bron['id']; ?>][referentie_tekst]"
                                                     rows="2"><?php echo htmlspecialchars($bron['referentie_tekst']); ?></textarea>
@@ -997,7 +1018,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     <?php endforeach; ?>
                                     <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
                                         style="margin-top: 15px;">
-                                        <!-- New sources for existing points will be added here -->
+                                        <!-- Nieuwe bronnen voor bestaande punten worden hier toegevoegd -->
                                     </div>
                                 </div>
                             <?php else: ?>
@@ -1011,7 +1032,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     </div>
                                     <div class="new-bronnen-to-existing-container" data-point-id="<?php echo $punt['id']; ?>"
                                         style="margin-top: 15px;">
-                                        <!-- New sources for existing points will be added here -->
+                                        <!-- Nieuwe bronnen voor bestaande punten worden hier toegevoegd -->
                                     </div>
                                 </div>
                             <?php endif; ?>
@@ -1021,9 +1042,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <p>Geen punten gevonden voor dit panorama.</p>
                 <?php endif; ?>
 
-                <!-- Container for new points -->
+                <!-- Container voor nieuwe punten -->
                 <div id="newPointsContainer" style="margin-top: 30px;">
-                    <!-- New points will be added here by JavaScript -->
+                    <!-- Nieuwe punten worden hier toegevoegd door JavaScript -->
                 </div>
             </div>
 
@@ -1036,7 +1057,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <?php include 'assets/includes/footer.php'; ?>
 
-    <!-- JavaScript files -->
+    <!-- JavaScript bestanden -->
     <script src="assets/js/recoords.js"></script>
     <script src="assets/js/bewerk.js"></script>
 </body>
