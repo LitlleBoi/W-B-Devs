@@ -45,7 +45,7 @@ $result_bronnen = $conn->query($sql_bronnen);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Verwijderde Items</title>
     <!-- Inclusie van algemene CSS stijlen -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- <link rel="stylesheet" href="assets/css/style.css"> -->
     <link rel="stylesheet" href="assets/css/verwijdeerd.css">
     <!-- Inclusie van Font Awesome iconen -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
